@@ -1,0 +1,111 @@
+(function () {
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* ── For each footer-injected wrap, find its anchor and position it ── */
+        document.querySelectorAll('.iimbg-dl-footer-slot .iimbg-dl-wrap').forEach(function (wrap) {
+
+            var anchorId = wrap.getAttribute('data-anchor');
+            var anchor   = anchorId ? document.getElementById(anchorId) : null;
+
+            if (anchor) {
+                // ── Step 1: Strip all padding/margin from every ancestor of the anchor
+                // so the theme's content-area whitespace collapses completely.
+                var el = anchor.parentElement;
+                while (el && el !== document.body) {
+                    el.style.padding    = '0';
+                    el.style.paddingTop = '0';
+                    el.style.paddingBottom = '0';
+                    el.style.margin     = '0';
+                    el.style.marginTop  = '0';
+                    el.style.marginBottom = '0';
+                    el.style.maxWidth   = 'none';
+                    el.style.width      = '100%';
+                    // Remove overflow constraints
+                    var cs = window.getComputedStyle(el);
+                    if (cs.overflow === 'hidden' || cs.overflowX === 'hidden') {
+                        el.style.overflow = 'visible';
+                    }
+                    el = el.parentElement;
+                }
+
+                // ── Step 2: Measure anchor position AFTER stripping (no padding offset)
+                var rect      = anchor.getBoundingClientRect();
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                var topOffset = rect.top + scrollTop;
+
+                // ── Step 3: Position wrap full-width at anchor's Y
+                wrap.style.position = 'absolute';
+                wrap.style.top      = topOffset + 'px';
+                wrap.style.left     = '0';
+                wrap.style.width    = '100%';
+                wrap.style.zIndex   = '1';
+
+                // ── Step 4: Sync anchor height = wrap height so footer stays below
+                function syncHeight() {
+                    anchor.style.height  = wrap.offsetHeight + 'px';
+                    anchor.style.display = 'block';
+                    // Also re-sync top in case layout shifted
+                    var r  = anchor.getBoundingClientRect();
+                    var st = window.pageYOffset || document.documentElement.scrollTop;
+                    wrap.style.top = (r.top + st) + 'px';
+                }
+                syncHeight();
+
+                if (window.ResizeObserver) {
+                    new ResizeObserver(syncHeight).observe(wrap);
+                }
+            }
+
+            /* ── Filter / search ─────────────────────────────────────────── */
+            var grid   = wrap.querySelector('.iimbg-dl-grid');
+            var empty  = wrap.querySelector('.iimbg-dl-empty');
+            var search = wrap.querySelector('.iimbg-dl-search input');
+            var tabs   = wrap.querySelectorAll('.iimbg-dl-tab');
+            var active = 'all';
+
+            if (!grid) return;
+
+            tabs.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    tabs.forEach(function (t) { t.classList.remove('iimbg-dl-tab--active'); });
+                    tab.classList.add('iimbg-dl-tab--active');
+                    active = tab.dataset.filter;
+                    filter();
+                });
+            });
+
+            search && search.addEventListener('input', filter);
+
+            function filter() {
+                var q       = search ? search.value.toLowerCase().trim() : '';
+                var cards   = grid.querySelectorAll('.iimbg-dl-card');
+                var visible = 0;
+
+                cards.forEach(function (card) {
+                    var labelEl  = card.querySelector('.iimbg-dl-card__label');
+                    var labelTxt = labelEl ? labelEl.textContent.trim().toLowerCase() : '';
+                    var yearNum  = parseInt(labelTxt.split(/[–\-]/)[0], 10) || 0;
+
+                    var passQ = !q || labelTxt.includes(q);
+                    var passF = active === 'all'      ? true
+                              : active === '2020s'    ? yearNum >= 2020 && yearNum <= 2029
+                              : active === '2010s'    ? yearNum >= 2010 && yearNum <= 2019
+                              : active === 'archives' ? yearNum > 0 && yearNum < 2010
+                              : true;
+
+                    var show = passQ && passF;
+                    card.style.display = show ? '' : 'none';
+                    if (show) visible++;
+                });
+
+                if (empty) empty.hidden = visible > 0;
+            }
+        });
+    });
+
+    /* ── Make body a positioning context for the absolute wraps ── */
+    document.documentElement.style.position = 'relative';
+
+})();

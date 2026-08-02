@@ -1,6 +1,6 @@
 # Track 2 — Automation & Data pipeline (Apps Script)
 
-Two Google Apps Scripts that turn the **IT Committee Event Feedback** Google
+Two Google Apps Scripts that turn the **Envision – Entrepreneurship Cell Event Feedback** Google
 Form into a self-running pipeline:
 
 ```

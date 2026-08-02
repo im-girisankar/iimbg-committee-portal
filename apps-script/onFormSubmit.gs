@@ -69,7 +69,7 @@ function buildThankYouHtml_(eventName, rating) {
   return "" +
     '<div style="max-width:600px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;background:#F2EDE3;color:#12100C;border-radius:8px;">' +
       '<div style="background:#C9A227;color:#12100C;padding:20px 24px;font-size:18px;font-weight:bold;border-radius:8px 8px 0 0;">' +
-        "IT Committee — IIM Bodh Gaya" +
+        "Envision – Entrepreneurship Cell, IIM Bodh Gaya" +
       "</div>" +
       '<div style="padding:28px 24px;">' +
         '<p style="margin:0 0 16px;font-size:16px;line-height:1.5;">Hi there,</p>' +
@@ -79,7 +79,7 @@ function buildThankYouHtml_(eventName, rating) {
         '<p style="margin:0 0 20px;font-size:16px;line-height:1.5;">Your input directly shapes the next event.</p>' +
       "</div>" +
       '<div style="padding:16px 24px;background:#1C1915;color:#9C948A;font-size:13px;border-radius:0 0 8px 8px;">' +
-        "IT Committee · IIM Bodh Gaya · You received this because you submitted event feedback." +
+        "Envision – Entrepreneurship Cell · IIM Bodh Gaya · You received this because you submitted event feedback." +
       "</div>" +
     "</div>";
 }

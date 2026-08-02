@@ -84,7 +84,7 @@ function dailyDigest() {
 
   var dateLine = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "EEE, d MMM");
   var text = [
-    "📊 *IT Committee — Daily Feedback Digest*",
+    "📊 *Envision – Entrepreneurship Cell — Daily Feedback Digest*",
     "_" + dateLine + "_",
     "",
     "*New responses:* " + newCount + "   *Avg rating:* " + avgRating.toFixed(2) + " ★",
