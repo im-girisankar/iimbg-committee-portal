@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 /* ─────────────────────────────────────────────────────────────
    Navbar — logo left, 4 links right. Hamburger < 768px.
@@ -15,7 +15,6 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const location = useLocation();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 bg-[#12100C]/95 backdrop-blur supports-[backdrop-filter]:bg-[#12100C]/80 border-b border-[#322C24]">

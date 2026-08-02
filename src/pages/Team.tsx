@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTeam } from "../lib/api";
+import type { TeamMember } from "../lib/schemas";
 import TeamCard from "../components/TeamCard";
 
 /* ─────────────────────────────────────────────────────────────
@@ -55,5 +56,3 @@ export default function Team() {
     </div>
   );
 }
-
-import type { TeamMember } from "../lib/schemas";
