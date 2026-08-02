@@ -8,7 +8,7 @@
     "venue": "Auditorium",
     "description": "A 90-minute hands-on session on weaving LLMs into case analysis and interview prep.",
     "seats": 120,
-    "image": "/images/events/tech-tuesday.svg",
+    "image": "/images/events/tech-tuesday-genai-08.jpg",
     "featured": true
   },
   {
@@ -20,7 +20,7 @@
     "venue": "Classroom Block A",
     "description": "Six hours, one dirty dataset, one story. Best visual insight takes the trophy.",
     "seats": 60,
-    "image": "/images/events/data-dash.svg",
+    "image": "/images/events/data-dash-hackathon-09.jpg",
     "featured": true
   },
   {
@@ -32,7 +32,7 @@
     "venue": "Auditorium",
     "description": "An open conversation on architecture, hiring, and the messy first year of a startup.",
     "seats": 200,
-    "image": "/images/events/fireside.svg",
+    "image": "/images/events/cto-fireside-08.jpg",
     "featured": true
   },
   {
@@ -44,7 +44,7 @@
     "venue": "Auditorium",
     "description": "From projector to mixer to mics — learn to operate the auditorium AV chain end to end.",
     "seats": 40,
-    "image": "/images/events/av-bootcamp.svg",
+    "image": "/images/events/av-workshop-08.jpg",
     "featured": false
   },
   {
@@ -56,7 +56,7 @@
     "venue": "Student Common Room",
     "description": "Casual tournaments, indie game demos, and a quiet corner for the non-gamers.",
     "seats": 80,
-    "image": "/images/events/gaming-night.svg",
+    "image": "/images/events/gaming-night-08.jpg",
     "featured": false
   },
   {
@@ -68,7 +68,7 @@
     "venue": "Lobby",
     "description": "Help the new batch get campus wifi, mail, and LMS set up — drop in, stay an hour.",
     "seats": 150,
-    "image": "/images/events/orientation.svg",
+    "image": "/images/events/orientation-support-08.jpg",
     "featured": false
   },
   {
@@ -80,7 +80,7 @@
     "venue": "Classroom Block B",
     "description": "A no-slides walkthrough of the network stack powering 2000 concurrent devices.",
     "seats": 90,
-    "image": "/images/events/infra-deepdive.svg",
+    "image": "/images/events/infra-deepdive-09.jpg",
     "featured": false
   }
 ]
