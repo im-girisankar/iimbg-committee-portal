@@ -80,3 +80,20 @@ the pointer untouched — so the next run retries the same batch. No response is
 | Digest silent | Check `RunLog` tab for `FAILED` entries. Verify `DIGEST_RECIPIENT` in Script Properties if not using sheet owner. |
 | `Could not find the '…' column` | The form field labels don't match the plan's. Rename the question labels (headers update automatically on the next submission). |
 | MailApp quota exceeded | `ERROR: MailApp… quota` in `EmailLog`. It resets daily; the portal demo needs only a handful of sends. |
+
+---
+
+## Looker Studio Dashboard (5 min)
+
+1. Go to **https://lookerstudio.google.com** → **Create → Blank Report**
+2. **Add Data** → **Google Sheets** → select `feedback-pipeline` → **Form Responses 1** → **Add**
+3. **Add Charts** (Insert → Chart or toolbar icons):
+   - **Scorecard** → Metric: `Average of Rating` → **Style** → Decimal places: `2`
+   - **Time Series** → Dimension: `Timestamp` (or date extracted from it) → Metric: `Record Count` → **Style** → Line color: `#C9A227`
+   - **Bar Chart** → Dimension: `Which event did you attend?` → Metric: `Average of Rating` → **Style** → Bar color: `#C9A227`
+   - **Table** → Dimensions: `Which event did you attend?`, `What can we improve?` → **Style** → Rows per page: `10` → add calculated field for truncation if needed
+4. **Theme** (Theme & Layout panel on right):
+   - **Report background:** `#12100C`
+   - **Primary color:** `#C9A227`
+   - **Font:** Inter (add via Text → Font → More fonts)
+5. **Share** (top right) → **Anyone with the link** → **Viewer** → **Copy link**
