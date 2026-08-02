@@ -1,0 +1,193 @@
+/* ─── IIMBG News Hub — Public JS ───────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  const AJAX  = IIMBGHUB.ajax;
+  const NONCE = IIMBGHUB.nonce;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.iimbg-hub').forEach(initHub);
+  });
+
+  function initHub(hub) {
+    const uid      = hub.id;
+    const state    = (window.IIMBG_HUB_STATE || {})[uid] || {};
+    let   current  = { tab: state.tab, paged: 1, search: '', category: '', year: '', orderby: 'date' };
+    let   debounce = null;
+    const perPage  = state.per_page || 12;
+
+    /* ── DOM refs ──────────────────────────────────── */
+    const items     = () => hub.querySelector(`#${uid}-items`);
+    const spinner   = () => hub.querySelector(`#${uid}-spinner`);
+    const pagination= () => hub.querySelector(`#${uid}-pagination`);
+    const countLbl  = () => hub.querySelector(`#${uid}-count`);
+    const clearBtn  = () => hub.querySelector(`#${uid}-clear`);
+    const yearSel   = () => hub.querySelector(`#${uid}-year`);
+    const catSel    = () => hub.querySelector(`#${uid}-cat`);
+    const orderSel  = () => hub.querySelector(`#${uid}-order`);
+    const searchInp = () => hub.querySelector(`#${uid}-search`);
+
+    /* ── Tab click ─────────────────────────────────── */
+    hub.querySelectorAll('.iimbg-hub-tab').forEach(btn => {
+      btn.addEventListener('click', function () {
+        if (this.dataset.tab === current.tab) return;
+        hub.querySelectorAll('.iimbg-hub-tab').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('active');
+        this.setAttribute('aria-selected', 'true');
+        current.tab = this.dataset.tab;
+        current.paged = 1;
+        current.search = current.category = current.year = '';
+        if (searchInp()) searchInp().value = '';
+        if (catSel())    catSel().value    = '';
+        if (yearSel())   yearSel().value   = '';
+        if (orderSel())  orderSel().value  = 'date';
+        load(true); // true = refresh filters too
+      });
+    });
+
+    /* ── Filters ───────────────────────────────────── */
+    if (yearSel())  yearSel().addEventListener('change',  function () { current.year     = this.value; current.paged = 1; load(); });
+    if (catSel())   catSel().addEventListener('change',   function () { current.category = this.value; current.paged = 1; load(); });
+    if (orderSel()) orderSel().addEventListener('change', function () { current.orderby  = this.value; current.paged = 1; load(); });
+
+    /* ── Search (debounced 350ms) ──────────────────── */
+    if (searchInp()) {
+      searchInp().addEventListener('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => { current.search = this.value; current.paged = 1; load(); }, 350);
+      });
+    }
+
+    /* ── Clear button ──────────────────────────────── */
+    if (clearBtn()) {
+      clearBtn().addEventListener('click', function () {
+        current.search = current.category = current.year = ''; current.paged = 1;
+        if (searchInp()) searchInp().value = '';
+        if (catSel())    catSel().value    = '';
+        if (yearSel())   yearSel().value   = '';
+        if (orderSel())  orderSel().value  = 'date';
+        this.style.display = 'none';
+        load();
+      });
+    }
+
+    /* ── Pagination (event delegation) ────────────── */
+    hub.addEventListener('click', function (e) {
+      const btn = e.target.closest('.iimbg-hub-page-btn');
+      if (!btn) return;
+      const pg = parseInt(btn.dataset.page, 10);
+      if (pg && pg !== current.paged) { current.paged = pg; load(); }
+    });
+
+    /* ── AJAX load ─────────────────────────────────── */
+    function load(refreshFilters) {
+      showSpinner(true);
+
+      // Show/hide clear button
+      if (clearBtn()) {
+        const hasFilters = current.search || current.category || current.year;
+        clearBtn().style.display = hasFilters ? '' : 'none';
+      }
+
+      const fd = new FormData();
+      fd.append('action',   'iimbg_hub_load');
+      fd.append('nonce',    NONCE);
+      fd.append('tab',      current.tab);
+      fd.append('paged',    current.paged);
+      fd.append('per_page', perPage);
+      fd.append('search',   current.search);
+      fd.append('category', current.category);
+      fd.append('year',     current.year);
+      fd.append('orderby',  current.orderby);
+
+      fetch(AJAX, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+          if (!data.success) { showSpinner(false); return; }
+          const d = data.data;
+
+          // Update items + set data-tab so CSS layout kicks in
+          const itemsEl = items();
+          itemsEl.innerHTML = d.html;
+          itemsEl.dataset.tab = current.tab;
+
+          // Update count label
+          const showing = Math.min(perPage, d.total - (current.paged - 1) * perPage);
+          if (countLbl()) {
+            countLbl().innerHTML = `Showing <strong>${showing > 0 ? showing : 0}</strong> of <strong>${d.total}</strong> results`;
+          }
+
+          // Update tab count badge
+          const badge = hub.querySelector(`.iimbg-hub-tab-count[data-tab-count="${current.tab}"]`);
+          if (badge) { badge.textContent = d.total || ''; }
+
+          // Update pagination
+          buildPagination(d.pages, current.paged);
+
+          // Update filter dropdowns if tab changed
+          if (refreshFilters) {
+            if (yearSel()) updateSelect(yearSel(), d.years, 'All Years');
+            if (catSel())  updateCatSelect(catSel(), d.cats);
+          }
+
+          showSpinner(false);
+
+          // Scroll to top of hub smoothly
+          hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(() => showSpinner(false));
+    }
+
+    /* ── Helpers ───────────────────────────────────── */
+    function showSpinner(show) {
+      if (spinner()) spinner().style.display = show ? 'flex' : 'none';
+      if (items()) items().style.opacity = show ? '0.4' : '1';
+    }
+
+    function buildPagination(pages, paged) {
+      const pg = pagination();
+      if (!pg) return;
+      if (pages <= 1) { pg.innerHTML = ''; return; }
+
+      let html = '';
+      if (paged > 1) html += `<button class="iimbg-hub-page-btn iimbg-hub-page-prev" data-page="${paged-1}">← Prev</button>`;
+
+      // Show window of pages
+      const delta = 2;
+      let from = Math.max(1, paged - delta);
+      let to   = Math.min(pages, paged + delta);
+      if (from > 1) html += `<button class="iimbg-hub-page-btn" data-page="1">1</button>${from > 2 ? '<span style="padding:0 4px;color:#999">…</span>' : ''}`;
+      for (let i = from; i <= to; i++) {
+        html += `<button class="iimbg-hub-page-btn ${i===paged?'active':''}" data-page="${i}">${i}</button>`;
+      }
+      if (to < pages) html += `${to < pages-1 ? '<span style="padding:0 4px;color:#999">…</span>' : ''}<button class="iimbg-hub-page-btn" data-page="${pages}">${pages}</button>`;
+      if (paged < pages) html += `<button class="iimbg-hub-page-btn iimbg-hub-page-next" data-page="${paged+1}">Next →</button>`;
+
+      pg.innerHTML = html;
+    }
+
+    function updateSelect(sel, values, allLabel) {
+      const cur = sel.value;
+      sel.innerHTML = `<option value="">${allLabel}</option>`;
+      (values || []).forEach(v => {
+        sel.innerHTML += `<option value="${v}"${v===cur?' selected':''}>${v}</option>`;
+      });
+    }
+
+    function updateCatSelect(sel, cats) {
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">All Categories</option>';
+      if (!cats) return;
+      Object.entries(cats).forEach(([slug, name]) => {
+        sel.innerHTML += `<option value="${slug}"${slug===cur?' selected':''}>${name}</option>`;
+      });
+    }
+
+    // Set initial tab count on load
+    const initBadge = hub.querySelector(`.iimbg-hub-tab-count[data-tab-count="${state.tab}"]`);
+    if (initBadge && state.total) initBadge.textContent = state.total;
+  }
+})();

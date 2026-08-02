@@ -1,0 +1,112 @@
+/* IIMBG Accessibility Toolbar v5.0 — Sitewide + Responsive */
+(function () {
+    'use strict';
+
+    var STEP        = 2;
+    var MIN         = 12;
+    var MAX         = 26;
+    var DEFAULT     = 16;
+    var STORAGE_KEY = 'iimbg_font_size';
+    var SR_KEY      = 'iimbg_sr_mode';
+
+    function storageGet(key) {
+        try { return localStorage.getItem(key); } catch(e) { return null; }
+    }
+    function storageSet(key, val) {
+        try { localStorage.setItem(key, val); } catch(e) {}
+    }
+    function getSavedSize() {
+        var v = parseInt(storageGet(STORAGE_KEY), 10);
+        return (v >= MIN && v <= MAX) ? v : DEFAULT;
+    }
+    function applyFontSize(size) {
+        document.documentElement.style.setProperty('font-size', size + 'px', 'important');
+        storageSet(STORAGE_KEY, size);
+    }
+    function setActive(activeEl, buttons) {
+        buttons.forEach(function(b) { b.classList.remove('iimbg-active'); });
+        if (activeEl) activeEl.classList.add('iimbg-active');
+    }
+    function announce(msg) {
+        var el = document.getElementById('iimbg-sr-announce');
+        if (!el) return;
+        el.textContent = '';
+        setTimeout(function() { el.textContent = msg; }, 60);
+    }
+
+    function init() {
+        var btnIncrease = document.getElementById('iimbg-btn-increase');
+        var btnReset    = document.getElementById('iimbg-btn-reset');
+        var btnDecrease = document.getElementById('iimbg-btn-decrease');
+        var btnSr       = document.getElementById('iimbg-btn-sr');
+
+        if (!btnIncrease || !btnReset || !btnDecrease || !btnSr) return;
+
+        var sizeButtons = [btnIncrease, btnReset, btnDecrease];
+        var fontSize    = getSavedSize();
+        var srActive    = storageGet(SR_KEY) === '1';
+
+        /* Apply saved font size */
+        applyFontSize(fontSize);
+
+        /* Set correct active button */
+        if (fontSize > DEFAULT)      setActive(btnIncrease, sizeButtons);
+        else if (fontSize < DEFAULT) setActive(btnDecrease, sizeButtons);
+        else                         setActive(btnReset,    sizeButtons);
+
+        /* Restore SR mode */
+        if (srActive) {
+            document.body.classList.add('iimbg-sr-mode');
+            btnSr.classList.add('iimbg-active');
+        }
+
+        /* A+ */
+        btnIncrease.addEventListener('click', function() {
+            if (fontSize < MAX) {
+                fontSize += STEP;
+                applyFontSize(fontSize);
+                setActive(btnIncrease, sizeButtons);
+                announce('Font size increased to ' + fontSize + ' pixels.');
+            }
+        });
+
+        /* A reset */
+        btnReset.addEventListener('click', function() {
+            fontSize = DEFAULT;
+            applyFontSize(fontSize);
+            setActive(btnReset, sizeButtons);
+            announce('Font size reset to default.');
+        });
+
+        /* A- */
+        btnDecrease.addEventListener('click', function() {
+            if (fontSize > MIN) {
+                fontSize -= STEP;
+                applyFontSize(fontSize);
+                setActive(btnDecrease, sizeButtons);
+                announce('Font size decreased to ' + fontSize + ' pixels.');
+            }
+        });
+
+        /* Screen Reader */
+        btnSr.addEventListener('click', function() {
+            srActive = !srActive;
+            btnSr.classList.toggle('iimbg-active', srActive);
+            document.body.classList.toggle('iimbg-sr-mode', srActive);
+            storageSet(SR_KEY, srActive ? '1' : '0');
+            var main = document.querySelector('main,[role="main"],#main,#content,.site-content,.entry-content');
+            if (main) {
+                if (srActive) { main.setAttribute('tabindex','-1'); main.focus(); }
+                else { main.removeAttribute('tabindex'); }
+            }
+            announce(srActive ? 'Screen reader mode on.' : 'Screen reader mode off.');
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+})();
