@@ -38,7 +38,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 - [x] Fonts loaded in `index.html`: Space Grotesk (display), Inter (body), JetBrains Mono (data)
 - [x] `src/main.tsx` — BrowserRouter + StrictMode
 - [x] Vite dev API proxy → local Hono dev server on :8787 (`vite.config.ts`) + `concurrently` dev scripts in `package.json`
-- [ ] `prefers-reduced-motion` handling (done in CSS) + 44px tap targets + 375px no-scroll (verify on pages)
+- [x] `prefers-reduced-motion` handling (done in CSS) + 44px tap targets + 375px no-scroll (verified on pages)
 
 ---
 
@@ -67,40 +67,41 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 - [x] `src/pages/Home.tsx` — hero: inline SVG gold Buddha silhouette + headline "The committee that runs the campus's tech." + gold CTA "Register for an event"; + featured events
 - [x] `src/pages/Events.tsx` — responsive grid (1/2/3 col); FilterBar; empty state "No events match — clear filters" as a working link
 - [x] `src/pages/Team.tsx` — same grid pattern
-- [~] `src/pages/Register.tsx` — single col max-w-md; labels above inputs; inline zod errors; disabled submit while pending; success panel echoing event name *(agent building)*
-- [~] `src/App.tsx` — Routes + layout shell (Navbar/Footer + Outlet) *(agent building)*
-- [~] Mobile rules verified at 375px on every page *(in review step)*
+- [x] `src/pages/Register.tsx` — single col max-w-md; labels above inputs; inline zod errors; disabled submit while pending; success panel echoing event name
+- [x] `src/App.tsx` — Routes + layout shell (Navbar/Footer + Outlet)
+- [x] Mobile rules verified at 375px on every page
 
 ---
 
 ## 5. Hono API + Scalar docs — *Day 1 evening / Day 2*
 
-- [~] `api/[[...route]].ts` — Hono app (zod-openapi) *(agent building)*
-- [~] `GET /api/events` — supports `?category=` & `?q=`
-- [~] `GET /api/events/:id`
-- [~] `GET /api/team`
-- [~] `POST /api/registrations` — zod validate → Supabase insert → 201 (validates event_id exists)
-- [~] `GET /api/health` — `{ status, uptime }` (data-engineer touch)
-- [~] `GET /api/docs` — Scalar UI rendering OpenAPI spec (generated from zod schemas)
-- [~] `vercel.json` — SPA rewrite keeping `/api/*` on functions
+- [x] `api/[[...route]].ts` — Hono app (zod-openapi)
+- [x] `GET /api/events` — supports `?category=` & `?q=`
+- [x] `GET /api/events/:id`
+- [x] `GET /api/team`
+- [x] `POST /api/registrations` — zod validate → Supabase insert → 201 (validates event_id exists)
+- [x] `GET /api/health` — `{ status, uptime }` (data-engineer touch)
+- [x] `GET /api/docs` — Scalar UI rendering OpenAPI spec (generated from zod schemas)
+- [x] `vercel.json` — SPA rewrite keeping `/api/*` on functions
 - [x] Dev: `npm run dev` starts Vite (5173) + API (8787) via `concurrently`; Vite proxies `/api`
 
 ---
 
 ## 6. Registration flow wiring — *Day 1 afternoon*
 
-- [~] FE `Register.tsx` posts to `/api/registrations`; manual `safeParse` → react-hook-form `setError` per field *(agent building)*
-- [~] Success panel shows the registered event's title *(agent building)*
-- [~] BE inserts into Supabase `registrations` table *(agent building)*
-- [ ] Smoke test: a real submit lands a row in Supabase (do in incognito — needs live env + table)
+- [x] FE `Register.tsx` posts to `/api/registrations`; manual `safeParse` → react-hook-form `setError` per field
+- [x] Success panel shows the registered event's title
+- [x] BE inserts into Supabase `registrations` table
+- [x] Smoke test: a real submit lands a row in Supabase (do in incognito — needs live env + table)
 
 ---
 
 ## 7. Testing — *Day 2 afternoon (timeboxed ~1h)*
 
-- [~] `tests/schemas.test.ts` — 6–8 cases: valid passes; bad email, short/bad phone, unknown event_id, missing name, notes>400 → fail with correct messages *(agent, after API lands)*
-- [~] `tests/events.test.ts` — filter by category; search by partial name (case-insensitive); combined filter+search *(agent, after API lands)*
-- [ ] `npm test` green → screenshot → `docs/tests-passing.png`
+- [x] `tests/schemas.test.ts` — 12 cases: valid passes; bad email, short/bad phone, unknown event_id, missing name, notes>400 → fail with correct messages
+- [x] `tests/events.test.ts` — filter by category; search by partial name (case-insensitive); combined filter+search (14 cases)
+- [x] `tests/api.test.ts` — createApp with fake Supabase: events, team, registrations valid 201 / invalid 400 / unknown event_id 400, health, docs, openapi (16 cases)
+- [x] `npm test` green → 42 passing → screenshot → `docs/tests-passing.png`
 
 ---
 
@@ -201,4 +202,6 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 - git repo initialized (`main`), baseline commit `21f353b` (scaffold + tokens + data + components + lib + schemas).
 - `package.json` scripts: `dev` = concurrently (Vite :5173 + API :8787), `test` = vitest, `test:watch`.
 - Spawned 3 parallel agents (Wave 1): **UI** (Register page + App shell + import cleanup), **API** (Hono/OpenAPI + Scalar + Vercel handler + dev server), **Ops** (apps-script ×2 + README + .env.example + schema.sql + .gitignore).
-- Wave 2 (tests) starts once the API agent lands, then review/test/fix-to-green, then commit milestones.
+- Tests written inline: `tests/schemas.test.ts` (12), `tests/events.test.ts` (14), `tests/api.test.ts` (16) — **42 tests pass**.
+- Build/lint/typecheck all green: `npm run build` ✓, `npm run lint` ✓, `npm test` ✓.
+- Final commit `c4e8a2f` (complete Task A portal: UI + API + tests + Track-2).
