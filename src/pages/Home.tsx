@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getEvents } from "../lib/api";
+import type { Event } from "../lib/schemas";
 import EventCard from "../components/EventCard";
 
 /* ─────────────────────────────────────────────────────────────
@@ -130,6 +132,3 @@ function FeaturedEventsGrid() {
   );
 }
 
-// React hooks need to be imported
-import { useState, useEffect } from "react";
-import type { Event } from "../lib/schemas";
