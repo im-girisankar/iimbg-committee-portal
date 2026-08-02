@@ -1,93 +1,137 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { getEvents } from "../lib/api";
 import type { Event } from "../lib/schemas";
 import EventCard from "../components/EventCard";
 
 /* ─────────────────────────────────────────────────────────────
-   Home page — signature hero with inline SVG gold Buddha
-   silhouette + gold CTA. Below: featured events (max 3).
+   Home page — Envision Entrepreneurship Cell, IIM Bodh Gaya
+   Clean, minimal hero with staggered fade-up animations.
+   Featured events grid below (max 3).
    ───────────────────────────────────────────────────────────── */
 
 export default function Home() {
-  // Featured events are loaded client-side after render for SSR compatibility
-  // In a full SSR setup we'd use a loader, but Vite SPA is fine for this scope.
   return (
-    <div className="pt-16 pb-20 px-4">
+    <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="mx-auto max-w-[1120px] mb-20">
-        {/* Buddha silhouette — the one permitted inline SVG "illustration" */}
-        <div className="relative mb-12">
-          <svg
-            viewBox="0 0 320 200"
-            className="w-full max-w-[400px] mx-auto"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            role="img"
-            aria-label="Buddha silhouette in gold"
-          >
-            <defs>
-              <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#C9A227" />
-                <stop offset="100%" stopColor="#8D7019" />
-              </linearGradient>
-            </defs>
-            {/* Lotus base */}
-            <path
-              d="M160 180 C120 170 100 140 110 110 C115 90 135 80 160 75 C185 80 205 90 210 110 C220 140 200 170 160 180 Z"
-              fill="url(#goldGrad)"
-              opacity="0.15"
-            />
-            {/* Meditation posture */}
-            <ellipse cx="160" cy="90" rx="55" ry="65" fill="url(#goldGrad)" opacity="0.25" />
-            {/* Head */}
-            <ellipse cx="160" cy="50" rx="30" ry="35" fill="url(#goldGrad)" opacity="0.35" />
-            {/* Ushnisha / topknot */}
-            <ellipse cx="160" cy="28" rx="18" ry="12" fill="url(#goldGrad)" opacity="0.45" />
-            {/* Ear suggestion */}
-            <ellipse cx="132" cy="52" rx="8" ry="14" fill="url(#goldGrad)" opacity="0.3" />
-            <ellipse cx="188" cy="52" rx="8" ry="14" fill="url(#goldGrad)" opacity="0.3" />
-            {/* Hands in dhyana mudra */}
-            <ellipse cx="140" cy="130" rx="18" ry="10" fill="url(#goldGrad)" opacity="0.3" />
-            <ellipse cx="180" cy="130" rx="18" ry="10" fill="url(#goldGrad)" opacity="0.3" />
-          </svg>
-        </div>
+      <section className="relative pt-20 pb-28 px-4 md:pt-32 md:pb-36">
+        <div className="mx-auto max-w-[1120px]">
+          <div className="text-center max-w-3xl mx-auto">
+            {/* Optional badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border bg-surface/80 backdrop-blur-sm mb-8"
+            >
+              <span className="mono text-xs">Powered by</span>
+              <span className="font-display font-semibold text-primary">Envision</span>
+              <span className="text-secondary">×</span>
+              <span className="font-display font-semibold text-primary">IT Committee</span>
+            </motion.div>
 
-        <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-display font-bold text-[#F2EDE3] leading-tight mb-6">
-            The committee that runs the campus's tech.
-          </h1>
-          <p className="text-lg md:text-xl text-[#9C948A] max-w-2xl mx-auto mb-10">
-            From auditorium AV to classroom wifi — we keep IIM Bodh Gaya
-            connected. Browse events, meet the team, join us.
-          </p>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#C9A227] text-[#12100C] font-display font-semibold text-lg rounded-xl hover:bg-[#C9A227]/90 transition-all hover:shadow-[0_0_0_1px_#C9A227] hover:shadow-lg"
-          >
-            Register for an event
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </Link>
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="font-display font-semibold text-4xl md:text-5xl lg:text-6xl leading-tight text-primary mb-6 tracking-tight"
+            >
+              Building the next generation of founders at IIM Bodh Gaya
+            </motion.h1>
+
+            {/* Subheadline */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-10 leading-relaxed"
+            >
+              Envision is the Entrepreneurship Cell of IIM Bodh Gaya. We empower aspiring founders
+              through events, mentorship, funding access, and a vibrant community of builders.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
+              <Link
+                to="/events"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-accent text-white font-display font-semibold text-lg rounded-2xl hover:bg-accent/90 transition-all hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              >
+                Explore Events
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+
+              <Link
+                to="/team"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-border text-primary font-display font-semibold text-lg rounded-2xl hover:border-accent hover:text-accent hover:bg-accent/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              >
+                Join the Team
+              </Link>
+            </motion.div>
+
+            {/* Subtle illustration / visual element */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-16 relative"
+              aria-hidden="true"
+            >
+              <div className="relative mx-auto max-w-4xl">
+                {/* Decorative geometric shapes */}
+                <div className="absolute -top-8 -right-8 w-32 h-32 rounded-2xl bg-accent/10 blur-2xl" />
+                <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-2xl bg-accent-secondary/10 blur-2xl" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-2xl border border-border bg-surface/50 backdrop-blur-sm flex items-center justify-center">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-accent/50">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Featured events */}
-      <section className="mx-auto max-w-[1120px]">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-display font-semibold text-[#F2EDE3]">
-            Featured Events
-          </h2>
-          <Link
-            to="/events"
-            className="text-sm font-medium text-[#C9A227] hover:text-[#C9A227]/70 transition flex items-center gap-1"
-          >
-            View all
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </Link>
-        </div>
+      <section className="px-4 pb-20 md:pb-28">
+        <div className="mx-auto max-w-[1120px]">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="font-display font-semibold text-2xl md:text-3xl text-primary"
+            >
+              Featured Events
+            </motion.h2>
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Link
+                to="/events"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent/70 transition-colors"
+              >
+                View all
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </motion.div>
+          </div>
 
-        <FeaturedEventsGrid />
+          <FeaturedEventsGrid />
+        </div>
       </section>
     </div>
   );
@@ -107,28 +151,62 @@ function FeaturedEventsGrid() {
 
   if (loading) {
     return (
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+        }}
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        aria-busy="true"
+      >
         {[1, 2, 3].map((i) => (
-          <div key={i} className="animate-pulse bg-[#1C1915] border border-[#322C24] rounded-xl h-80" />
+          <motion.div
+            key={i}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+            }}
+            className="bg-surface border border-border rounded-2xl h-80 animate-pulse"
+          />
         ))}
-      </div>
+      </motion.div>
     );
   }
 
   if (events.length === 0) {
     return (
-      <p className="text-center text-[#9C948A] py-12">
-        No featured events right now. <Link to="/events" className="text-[#C9A227] underline">Check all events</Link>.
-      </p>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="text-center text-secondary py-16"
+      >
+        No featured events right now.{" "}
+        <Link to="/events" className="text-accent underline underline-offset-2 hover:text-accent/70 transition-colors">
+          Check all events
+        </Link>
+        .
+      </motion.p>
     );
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+      }}
+      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+    >
       {events.map((event, i) => (
-        <EventCard key={event.id} event={event} index={i} />
+        <motion.div key={event.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}>
+          <EventCard event={event} index={i} />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
-

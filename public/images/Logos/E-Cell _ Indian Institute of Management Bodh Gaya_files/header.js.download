@@ -1,0 +1,212 @@
+/* ============================================================
+   IIM Bodh Gaya — Header Scripts
+   File: assets/js/header.js
+   Enqueued via functions.php → iimbg_enqueue_scripts()
+   ============================================================ */
+(function () {
+    'use strict';
+
+    var loader   = document.getElementById('loader'),
+        hdr      = document.getElementById('site-header'),
+        overlay  = document.getElementById('iimbg-nav-overlay'),
+        burger   = document.getElementById('iimbgBurger'),
+        closeBtn = document.getElementById('mnavClose'),
+        subArea  = document.getElementById('mnavSubArea'),
+        divider  = document.getElementById('mnavDivider'),
+        isOpen   = false,
+        active   = null;
+
+    /* ── Page loader ── */
+    function hideLoader() {
+        if (loader) {
+            loader.classList.add('loader-gone');
+            loader.classList.add('hidden');
+        }
+    }
+    if (document.readyState === 'complete') hideLoader();
+    else window.addEventListener('load', hideLoader);
+    /* Safety: always hide after 2s no matter what */
+    setTimeout(hideLoader, 2000);
+
+    /* ── Sticky: absolute → fixed on scroll ── */
+    var spacer    = document.getElementById('hdr-spacer');
+    var triggered = false;
+    var hdrH      = hdr.offsetHeight || 80;
+
+    function syncSticky() {
+        var scrolled = window.scrollY >= hdrH;
+        if (scrolled && !triggered) {
+            triggered = true;
+            hdr.classList.add('hdr-stuck');
+            if (spacer) spacer.classList.add('visible');
+        } else if (!scrolled && triggered) {
+            triggered = false;
+            hdr.classList.remove('hdr-stuck');
+            if (spacer) spacer.classList.remove('visible');
+        }
+    }
+    window.addEventListener('scroll', syncSticky, { passive: true });
+    syncSticky();
+
+    /* ── Mobile breakpoint ── */
+    var mq = window.matchMedia('(max-width: 768px)');
+    function mob() { return mq.matches; }
+
+    /* ── Open menu overlay ── */
+    function openMenu() {
+        isOpen = true;
+        overlay.classList.add('is-open');
+        burger.classList.add('is-open');
+        burger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    /* ── Close menu overlay ── */
+    function closeMenu() {
+        isOpen = false;
+        overlay.classList.remove('is-open');
+        burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        deactivateAll();
+    }
+
+    burger.addEventListener('click', function () { isOpen ? closeMenu() : openMenu(); });
+    closeBtn.addEventListener('click', closeMenu);
+
+    /* Close when clicking outside the panel */
+    overlay.addEventListener('click', function (e) {
+        if (!e.target.closest('.mnav-panel')) closeMenu();
+    });
+
+    /* Close on Escape key */
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) closeMenu();
+    });
+
+    /* Close when navigating to a real link (not parent toggles) */
+    overlay.addEventListener('click', function (e) {
+        var a = e.target.closest('a[href]');
+        if (a && !a.hasAttribute('data-sub')) closeMenu();
+        /* parent items with data-sub are handled by toggleMobile — don't close */
+    });
+
+    /* ── Deactivate all sub-panels ── */
+    function deactivateAll() {
+        document.querySelectorAll('.mnav-btn.sub-open').forEach(function (b) {
+            b.classList.remove('sub-open');
+        });
+        document.querySelectorAll('.sub-panel.is-vis').forEach(function (p) {
+            p.classList.remove('is-vis');
+        });
+        document.querySelectorAll('.mnav-acc.is-open').forEach(function (a) {
+            a.classList.remove('is-open');
+        });
+        subArea.classList.remove('vis');
+        divider.classList.remove('vis');
+        active = null;
+    }
+
+    /* ── Desktop: show right sub-panel on hover/click ── */
+    function activateDesktop(btn) {
+        var id    = btn.getAttribute('data-sub');
+        var panel = document.getElementById(id);
+        if (!panel) return;
+
+        if (active && active !== btn) {
+            active.classList.remove('sub-open');
+            var prev = document.getElementById(active.getAttribute('data-sub'));
+            if (prev) prev.classList.remove('is-vis');
+        }
+
+        btn.classList.add('sub-open');
+        panel.classList.add('is-vis');
+        subArea.classList.add('vis');
+        divider.classList.add('vis');
+        active = btn;
+    }
+
+    /* ── Mobile: toggle inline accordion ── */
+    function toggleMobile(btn) {
+        var accId   = 'acc' + btn.getAttribute('data-sub');
+        var acc     = document.getElementById(accId);
+        var wasOpen = btn.classList.contains('sub-open');
+
+        /* Close all open items first */
+        document.querySelectorAll('.mnav-btn.sub-open').forEach(function (b) {
+            b.classList.remove('sub-open');
+            var a = document.getElementById('acc' + b.getAttribute('data-sub'));
+            if (a) a.classList.remove('is-open');
+        });
+
+        if (!wasOpen) {
+            btn.classList.add('sub-open');
+            if (acc) acc.classList.add('is-open');
+            active = btn;
+        } else {
+            active = null;
+        }
+    }
+
+    /* ── Attach handlers to parent nav items ── */
+    document.querySelectorAll('.mnav-btn[data-sub]').forEach(function (btn) {
+        /* Desktop hover — show sub-panel */
+        btn.addEventListener('mouseenter', function () {
+            if (!mob()) activateDesktop(btn);
+        });
+
+        /* Click — first click opens panel, second navigates (desktop) */
+        btn.addEventListener('click', function (e) {
+            if (mob()) {
+                e.preventDefault();
+                toggleMobile(btn);
+            } else {
+                if (!btn.classList.contains('sub-open')) {
+                    e.preventDefault();
+                    activateDesktop(btn);
+                }
+                /* already open → let href navigate */
+            }
+        });
+    });
+
+    /* Auto-open active ancestor on page load */
+    var ap = document.querySelector('.mnav-btn.is-active[data-sub]');
+    if (ap) { mob() ? toggleMobile(ap) : activateDesktop(ap); }
+
+    /* Public API */
+    window.iimbgToggleMenu = function () { isOpen ? closeMenu() : openMenu(); };
+
+
+    /* ── Dark / Light mode toggle ── */
+    (function () {
+        var btn = document.getElementById('iimbg-theme-toggle');
+        if (!btn) return;
+
+        /* Load saved preference */
+        var saved = localStorage.getItem('iimbg-theme') || 'day';
+        applyTheme(saved);
+
+        btn.addEventListener('click', function () {
+            var current = document.body.classList.contains('night-mode') ? 'night' : 'day';
+            var next    = current === 'day' ? 'night' : 'day';
+            applyTheme(next);
+            localStorage.setItem('iimbg-theme', next);
+        });
+
+        function applyTheme(mode) {
+            if (mode === 'night') {
+                document.body.classList.add('night-mode');
+                document.body.classList.remove('day-mode');
+                btn.textContent = '☀️';
+                btn.setAttribute('title', 'Switch to Day Mode');
+            } else {
+                document.body.classList.add('day-mode');
+                document.body.classList.remove('night-mode');
+                btn.textContent = '🌙';
+                btn.setAttribute('title', 'Switch to Night Mode');
+            }
+        }
+    }());
+
+}());

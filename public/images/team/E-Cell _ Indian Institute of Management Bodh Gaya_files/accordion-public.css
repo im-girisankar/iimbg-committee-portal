@@ -1,0 +1,122 @@
+/* ============================================================
+   Accordion Blocks – Public Styles
+   4 themes: default | minimal | bordered | rounded
+   ============================================================ */
+
+/* ── Base ── */
+.accb-wrap { margin: 1.5em 0; }
+.accb-error, .accb-empty { color: #856404; background: #fff3cd; border: 1px solid #ffc107; padding: 8px 14px; border-radius: 6px; font-size: 14px; }
+
+/* ── Trigger button ── */
+.accb-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1em;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: background .15s, color .15s;
+}
+.accb-trigger:focus-visible { outline: 2px solid #2271b1; outline-offset: -2px; border-radius: 4px; }
+.accb-trigger__text { flex: 1; }
+
+/* ── Icon sprites ── */
+.accb-trigger__icon { flex-shrink: 0; width: 22px; height: 22px; margin-left: 12px; position: relative; transition: transform .25s; }
+
+/* Plus / Minus */
+.accb-icon--plus .accb-trigger__icon::before,
+.accb-icon--plus .accb-trigger__icon::after {
+    content: ''; position: absolute; background: currentColor;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    border-radius: 2px;
+}
+.accb-icon--plus .accb-trigger__icon::before { width: 14px; height: 2px; }
+.accb-icon--plus .accb-trigger__icon::after  { width: 2px; height: 14px; transition: transform .25s; }
+.accb-icon--plus .accb-item--open .accb-trigger__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+/* Arrow */
+.accb-icon--arrow .accb-trigger__icon::after {
+    content: '→'; font-size: 16px; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); line-height: 1; transition: transform .25s;
+}
+.accb-icon--arrow .accb-item--open .accb-trigger__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+/* Chevron */
+.accb-icon--chevron .accb-trigger__icon::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 9px; height: 9px; border-right: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor;
+    transform: translate(-50%, -65%) rotate(45deg); transition: transform .25s;
+}
+.accb-icon--chevron .accb-item--open .accb-trigger__icon::after { transform: translate(-50%, -35%) rotate(-135deg); }
+
+/* None */
+.accb-icon--none .accb-trigger__icon { display: none; }
+
+/* ── Panel ── */
+.accb-panel { overflow: hidden; }
+.accb-panel[hidden] { display: none; }
+.accb-panel__inner { padding: 4px 18px 18px; line-height: 1.7; font-size: .97em; }
+.accb-panel__inner > *:first-child { margin-top: 0; }
+.accb-panel__inner > *:last-child  { margin-bottom: 0; }
+
+/* ── Animation (JS adds .accb-animating) ── */
+.accb-panel.accb-animating { display: block !important; overflow: hidden; }
+
+/* ============================================================
+   THEME: default
+   ============================================================ */
+.accb-style--default .accb-item {
+    border-bottom: 1px solid #e2e8f0;
+}
+.accb-style--default .accb-item:first-child { border-top: 1px solid #e2e8f0; }
+.accb-style--default .accb-trigger { color: #1a202c; }
+.accb-style--default .accb-trigger:hover { background: #f7fafc; color: #2271b1; }
+.accb-style--default .accb-item--open > .accb-trigger { color: #2271b1; }
+.accb-style--default .accb-panel__inner { color: #4a5568; }
+
+/* ============================================================
+   THEME: minimal
+   ============================================================ */
+.accb-style--minimal .accb-item { margin-bottom: 4px; }
+.accb-style--minimal .accb-trigger { color: #374151; font-weight: 500; padding: 10px 6px; }
+.accb-style--minimal .accb-trigger:hover { color: #2271b1; }
+.accb-style--minimal .accb-item--open > .accb-trigger { color: #2271b1; font-weight: 600; }
+.accb-style--minimal .accb-panel__inner { padding: 0 6px 12px; color: #4b5563; }
+
+/* ============================================================
+   THEME: bordered
+   ============================================================ */
+.accb-style--bordered .accb-item {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+.accb-style--bordered .accb-trigger { color: #212529; background: #f8f9fa; }
+.accb-style--bordered .accb-trigger:hover { background: #e9ecef; }
+.accb-style--bordered .accb-item--open > .accb-trigger { background: #e8f0fe; color: #1a56db; border-bottom: 1px solid #dee2e6; }
+.accb-style--bordered .accb-panel__inner { color: #495057; }
+
+/* ============================================================
+   THEME: rounded
+   ============================================================ */
+.accb-style--rounded .accb-item {
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    overflow: hidden;
+    transition: box-shadow .2s;
+}
+.accb-style--rounded .accb-item:hover { box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.accb-style--rounded .accb-trigger { color: #1e293b; padding: 16px 20px; }
+.accb-style--rounded .accb-trigger:hover { background: #f1f5f9; }
+.accb-style--rounded .accb-item--open { background: #fff; box-shadow: 0 4px 16px rgba(34,113,177,.12); }
+.accb-style--rounded .accb-item--open > .accb-trigger { color: #1a56db; }
+.accb-style--rounded .accb-panel__inner { padding: 6px 20px 20px; color: #475569; }

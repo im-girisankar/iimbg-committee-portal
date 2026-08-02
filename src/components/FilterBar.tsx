@@ -35,7 +35,7 @@ export default function FilterBar({ onFilter }: { onFilter: (opts: { category?: 
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 mb-6" role="search" aria-label="Filter events">
+    <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-transparent" role="search" aria-label="Filter events">
       {/* Category chips */}
       <div className="flex flex-wrap gap-2" role="group" aria-label="Event categories">
         {categories.map((cat) => (
@@ -45,8 +45,8 @@ export default function FilterBar({ onFilter }: { onFilter: (opts: { category?: 
             onClick={() => handleCategory(cat)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium mono transition-all ${
               selectedCategory === cat
-                ? "bg-[#C9A227] text-[#12100C] shadow-[0_0_0_1px_#C9A227]"
-                : "bg-[#1C1915] text-[#9C948A] border border-[#322C24] hover:bg-[#322C24] hover:text-[#F2EDE3]"
+                ? "bg-[var(--color-accent)] text-white shadow-[var(--shadow-soft)]"
+                : "bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-secondary)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
             }`}
             aria-pressed={selectedCategory === cat}
           >
@@ -62,7 +62,7 @@ export default function FilterBar({ onFilter }: { onFilter: (opts: { category?: 
         </label>
         <div className="relative">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9C948A]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-secondary)]"
             width="18"
             height="18"
             viewBox="0 0 24 24"
@@ -82,7 +82,7 @@ export default function FilterBar({ onFilter }: { onFilter: (opts: { category?: 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search events…"
-            className="w-full pl-10 pr-4 py-2 bg-[#1C1915] border border-[#322C24] rounded-lg text-[#F2EDE3] placeholder-[#9C948A] focus:border-[#C9A227] focus:outline-none focus:ring-1 focus:ring-[#C9A227] transition"
+            className="w-full pl-10 pr-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-[var(--color-primary)] placeholder-[var(--color-secondary)] focus:border-[var(--color-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] transition"
           />
         </div>
       </form>
