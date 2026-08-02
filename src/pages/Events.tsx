@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { getEvents, filterLocal } from "../lib/api";
 import type { Event } from "../lib/schemas";
 import EventCard from "../components/EventCard";
@@ -29,39 +30,64 @@ export default function Events() {
 
   if (loading) {
     return (
-      <div className="pt-24 pb-20 px-4">
+      <div className="pt-24 pb-20 px-4 bg-background">
         <div className="mx-auto max-w-[1120px]">
-          <div className="animate-pulse space-y-6">
-            <div className="h-10 bg-[#1C1915] rounded w-1/4" />
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+            }}
+            className="animate-pulse space-y-6"
+          >
+            <motion.div className="h-10 bg-background rounded w-1/4" />
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-[#1C1915] border border-[#322C24] rounded-xl h-80" />
+                <motion.div
+                  key={i}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+                  }}
+                  className="bg-surface border border-border rounded-2xl h-80"
+                />
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pt-24 pb-20 px-4">
+    <div className="pt-24 pb-20 px-4 bg-background">
       <div className="mx-auto max-w-[1120px]">
-        <header className="mb-8">
-          <h1 className="text-3xl font-display font-bold text-[#F2EDE3] mb-2">
+        <motion.header
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <h1 className="font-display font-bold text-3xl md:text-4xl text-primary mb-2">
             All Events
           </h1>
-          <p className="text-[#9C948A]">
+          <p className="text-secondary">
             Filter by category or search by title, venue, or description.
           </p>
-        </header>
+        </motion.header>
 
         <FilterBar onFilter={handleFilter} />
 
         {filtered.length === 0 ? (
-          <div className="text-center py-16 border border-dashed border-[#322C24] rounded-xl bg-[#1C1915]/50">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center py-16 border border-dashed border-border rounded-2xl bg-surface/50"
+          >
             <svg
-              className="mx-auto mb-4 text-[#322C24] w-12 h-12"
+              className="mx-auto mb-4 text-border w-12 h-12"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -73,22 +99,34 @@ export default function Events() {
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
-            <p className="text-lg text-[#9C948A] mb-2">
+            <p className="text-lg text-secondary mb-2">
               No events match your filters.
             </p>
             <button
               onClick={() => handleFilter({ category: undefined, q: undefined })}
-              className="text-[#C9A227] hover:underline font-medium mono"
+              className="text-accent hover:underline font-medium mono"
             >
               Clear filters
             </button>
-          </div>
+          </motion.div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Events">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+            }}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            role="list"
+            aria-label="Events"
+          >
             {filtered.map((event, i) => (
-              <EventCard key={event.id} event={event} index={i} />
+              <motion.div key={event.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}>
+                <EventCard event={event} index={i} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

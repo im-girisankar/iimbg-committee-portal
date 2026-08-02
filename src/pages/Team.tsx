@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { getTeam } from "../lib/api";
 import type { TeamMember } from "../lib/schemas";
 import TeamCard from "../components/TeamCard";
 
 /* ─────────────────────────────────────────────────────────────
-   Team page — same grid pattern, member cards with avatar + role.
+   Team page — Envision Entrepreneurship Cell team.
+   Clean grid with staggered fade-up animations.
    ───────────────────────────────────────────────────────────── */
 
 export default function Team() {
@@ -20,38 +22,70 @@ export default function Team() {
 
   if (loading) {
     return (
-      <div className="pt-24 pb-20 px-4">
+      <div className="pt-24 pb-20 px-4 bg-background">
         <div className="mx-auto max-w-[1120px]">
-          <div className="animate-pulse space-y-6">
-            <div className="h-10 bg-[#1C1915] rounded w-1/4" />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                <div key={i} className="bg-[#1C1915] border border-[#322C24] rounded-xl h-80" />
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+            }}
+            className="animate-pulse space-y-6"
+          >
+            <motion.div className="h-10 bg-background rounded w-1/4" />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+                <motion.div
+                  key={i}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+                  }}
+                  className="bg-surface border border-border rounded-2xl h-80"
+                />
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pt-24 pb-20 px-4">
+    <div className="pt-24 pb-20 px-4 bg-background">
       <div className="mx-auto max-w-[1120px]">
-        <header className="mb-10">
-          <h1 className="text-3xl font-display font-bold text-[#F2EDE3] mb-2">
+        <motion.header
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
+        >
+          <h1 className="font-display font-bold text-3xl md:text-4xl text-primary mb-2">
             The Team
           </h1>
-          <p className="text-[#9C948A]">
-            The people keeping the campus's tech running.
+          <p className="text-secondary">
+            The people driving Envision's mission to build the next generation of founders.
           </p>
-        </header>
+        </motion.header>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" role="list" aria-label="Team members">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+          }}
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          role="list"
+          aria-label="Team members"
+        >
           {members.map((member, i) => (
-            <TeamCard key={member.id} member={member} index={i} />
+            <motion.div key={member.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}>
+              <TeamCard member={member} index={i} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

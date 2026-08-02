@@ -1,58 +1,98 @@
-﻿[
+[
   {
-    "id": "aanya-raj",
-    "name": "Aanya Raj",
-    "role": "Committee Lead",
-    "bio": "Coordinates the calendar and owns event uptime.",
+    "id": "president",
+    "name": "Arjun Patel",
+    "role": "President",
+    "bio": "Leads the cell's vision and strategy for entrepreneurial excellence.",
     "avatar": "/images/team/member-1.jpg",
-    "vertical": "Operations"
+    "vertical": "President"
   },
   {
-    "id": "rohan-mehta",
-    "name": "Rohan Mehta",
-    "role": "Infrastructure Lead",
-    "bio": "Runs the campus network and event AV chain.",
+    "id": "vice-president",
+    "name": "Priya Sharma",
+    "role": "Vice President",
+    "bio": "Drives execution across all verticals with operational rigor.",
     "avatar": "/images/team/member-2.jpg",
-    "vertical": "Infrastructure"
+    "vertical": "Vice President"
   },
   {
-    "id": "ishaan-bose",
-    "name": "Ishaan Bose",
-    "role": "Web & API",
-    "bio": "Builds the portal and keeps the API honest.",
+    "id": "startup-relations",
+    "name": "Rohit Kumar",
+    "role": "Startup Relations",
+    "bio": "Builds partnerships with early-stage ventures and accelerators.",
     "avatar": "/images/team/member-3.jpg",
-    "vertical": "Development"
+    "vertical": "Startup Relations"
   },
   {
-    "id": "nika-sharma",
-    "name": "Nika Sharma",
-    "role": "Data & Automation",
-    "bio": "Owns the feedback pipeline and dashboards.",
+    "id": "industry-relations",
+    "name": "Anjali Mehta",
+    "role": "Industry Relations",
+    "bio": "Connects with corporates and VCs for strategic collaborations.",
     "avatar": "/images/team/member-4.jpg",
-    "vertical": "Development"
+    "vertical": "Industry Relations"
   },
   {
-    "id": "dhruv-nair",
-    "name": "Dhruv Nair",
-    "role": "Support Engineer",
-    "bio": "First responder for classroom and auditorium AV issues.",
+    "id": "events-lead",
+    "name": "Vikram Singh",
+    "role": "Events Lead",
+    "bio": "Curates flagship entrepreneurship events and summits.",
     "avatar": "/images/team/member-5.jpg",
-    "vertical": "Support"
+    "vertical": "Events Lead"
   },
   {
-    "id": "tara-verma",
-    "name": "Tara Verma",
-    "role": "Support Engineer",
-    "bio": "On-call for LMS, mail, and wifi setup drives.",
+    "id": "operations",
+    "name": "Sneha Reddy",
+    "role": "Operations",
+    "bio": "Ensures seamless event logistics and operational excellence.",
     "avatar": "/images/team/member-6.jpg",
-    "vertical": "Support"
+    "vertical": "Operations"
   },
   {
-    "id": "kai-singh",
-    "name": "Kai Singh",
-    "role": "Events Coordinator",
-    "bio": "Bridges the IT calendar with the clubs and committees.",
+    "id": "marketing",
+    "name": "Karan Malhotra",
+    "role": "Marketing",
+    "bio": "Amplifies Envision's voice and reach across channels.",
     "avatar": "/images/team/member-7.jpg",
-    "vertical": "Operations"
+    "vertical": "Marketing"
+  },
+  {
+    "id": "community",
+    "name": "Neha Gupta",
+    "role": "Community",
+    "bio": "Nurtures the founder community through engagement programs.",
+    "avatar": "/images/team/member-8.jpg",
+    "vertical": "Community"
+  },
+  {
+    "id": "innovation",
+    "name": "Aditya Joshi",
+    "role": "Innovation",
+    "bio": "Spearheads new initiatives and pilots for ecosystem growth.",
+    "avatar": "/images/team/member-9.jpg",
+    "vertical": "Innovation"
+  },
+  {
+    "id": "design",
+    "name": "Ishita Rao",
+    "role": "Design",
+    "bio": "Crafts visual identity and experiences for brand impact.",
+    "avatar": "/images/team/member-10.jpg",
+    "vertical": "Design"
+  },
+  {
+    "id": "finance",
+    "name": "Rahul Agarwal",
+    "role": "Finance",
+    "bio": "Manages budgets and sponsorships for sustainable operations.",
+    "avatar": "/images/team/member-11.jpg",
+    "vertical": "Finance"
+  },
+  {
+    "id": "content",
+    "name": "Meera Nair",
+    "role": "Content",
+    "bio": "Produces stories, insights, and resources for the community.",
+    "avatar": "/images/team/member-12.jpg",
+    "vertical": "Content"
   }
 ]
