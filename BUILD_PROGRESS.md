@@ -37,7 +37,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 - [x] Design tokens defined in `src/styles/index.css` (`@theme`): ink #12100C, surface #1C1915, gold #C9A227, bodhi #6B7F5E, paper #F2EDE3, muted #9C948A
 - [x] Fonts loaded in `index.html`: Space Grotesk (display), Inter (body), JetBrains Mono (data)
 - [x] `src/main.tsx` — BrowserRouter + StrictMode
-- [ ] Lock Vite to route the dev API proxy to the local Hono dev server (`vite.config.ts`) **next**
+- [x] Vite dev API proxy → local Hono dev server on :8787 (`vite.config.ts`) + `concurrently` dev scripts in `package.json`
 - [ ] `prefers-reduced-motion` handling (done in CSS) + 44px tap targets + 375px no-scroll (verify on pages)
 
 ---
@@ -52,54 +52,54 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 ## 3. Shared schema + API client — *Day 1*
 
 - [x] `src/lib/schemas.ts` — `registrationSchema` (zod), shared FE/BE; phone 10 digits; valid email; event_id≥1; program enum; notes ≤400
-- [ ] `src/lib/api.ts` — fetch helpers (`getEvents`, `getTeam`, `createRegistration`) with JSON-fallback to local data if API down
-- [ ] `src/lib/supabase.ts` (server-only) — client from `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` env
+- [x] `src/lib/api.ts` — fetch helpers (`getEvents`, `getTeam`, `createRegistration`) with JSON-fallback to local data if API down (`filterLocal` mirrors server logic)
+- [x] `src/lib/supabase.ts` (server-only) — client from `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` env
 
 ---
 
 ## 4. Pages + components + layout — *Day 1 afternoon*
 
-- [ ] `src/components/Navbar.tsx` — logo left, 4 links right; hamburger <768px
-- [ ] `src/components/Footer.tsx`
-- [ ] `src/components/EventCard.tsx` — staggered fade-up (the one permitted animation)
-- [ ] `src/components/TeamCard.tsx` — avatar (DiceBear), name, mono role, one-line bio
-- [ ] `src/components/FilterBar.tsx` — horizontal category chips + search input
-- [ ] `src/pages/Home.tsx` — hero: inline SVG gold Buddha silhouette + headline "The committee that runs the campus's tech." + gold CTA "Register for an event"; + featured events
-- [ ] `src/pages/Events.tsx` — responsive grid (1/2/3 col); FilterBar; empty state "No events match — clear filters" as a working link
-- [ ] `src/pages/Team.tsx` — same grid pattern
-- [ ] `src/pages/Register.tsx` — single col max-w-md; labels above inputs; inline zod errors; disabled submit while pending; success panel echoing event name
-- [ ] `src/App.tsx` — Routes + layout shell (Navbar/Footer + Outlet)
-- [ ] Mobile rules verified at 375px on every page
+- [x] `src/components/Navbar.tsx` — logo left, 4 links right; hamburger <768px
+- [x] `src/components/Footer.tsx`
+- [x] `src/components/EventCard.tsx` — staggered fade-up (the one permitted animation)
+- [x] `src/components/TeamCard.tsx` — avatar (DiceBear), name, mono role, one-line bio
+- [x] `src/components/FilterBar.tsx` — horizontal category chips + search input
+- [x] `src/pages/Home.tsx` — hero: inline SVG gold Buddha silhouette + headline "The committee that runs the campus's tech." + gold CTA "Register for an event"; + featured events
+- [x] `src/pages/Events.tsx` — responsive grid (1/2/3 col); FilterBar; empty state "No events match — clear filters" as a working link
+- [x] `src/pages/Team.tsx` — same grid pattern
+- [~] `src/pages/Register.tsx` — single col max-w-md; labels above inputs; inline zod errors; disabled submit while pending; success panel echoing event name *(agent building)*
+- [~] `src/App.tsx` — Routes + layout shell (Navbar/Footer + Outlet) *(agent building)*
+- [~] Mobile rules verified at 375px on every page *(in review step)*
 
 ---
 
 ## 5. Hono API + Scalar docs — *Day 1 evening / Day 2*
 
-- [ ] `api/[[...route]].ts` — Hono app (zod-openapi)
-- [ ] `GET /api/events` — supports `?category=` & `?q=`
-- [ ] `GET /api/events/:id`
-- [ ] `GET /api/team`
-- [ ] `POST /api/registrations` — zod validate → Supabase insert → 201 (validates event_id exists)
-- [ ] `GET /api/health` — `{ status, uptime }` (data-engineer touch)
-- [ ] `GET /api/docs` — Scalar UI rendering OpenAPI spec (generated from zod schemas)
-- [ ] `vercel.json` — routes `/api/*` to the serverless function
-- [ ] Dev: `npm run dev` starts Vite (5173) + API (8787) via `concurrently`; Vite proxies `/api`
+- [~] `api/[[...route]].ts` — Hono app (zod-openapi) *(agent building)*
+- [~] `GET /api/events` — supports `?category=` & `?q=`
+- [~] `GET /api/events/:id`
+- [~] `GET /api/team`
+- [~] `POST /api/registrations` — zod validate → Supabase insert → 201 (validates event_id exists)
+- [~] `GET /api/health` — `{ status, uptime }` (data-engineer touch)
+- [~] `GET /api/docs` — Scalar UI rendering OpenAPI spec (generated from zod schemas)
+- [~] `vercel.json` — SPA rewrite keeping `/api/*` on functions
+- [x] Dev: `npm run dev` starts Vite (5173) + API (8787) via `concurrently`; Vite proxies `/api`
 
 ---
 
 ## 6. Registration flow wiring — *Day 1 afternoon*
 
-- [ ] FE `Register.tsx` posts to `/api/registrations`; manual `safeParse` → react-hook-form `setError` per field
-- [ ] Success panel shows the registered event's title
-- [ ] BE inserts into Supabase `registrations` table
-- [ ] Smoke test: a real submit lands a row in Supabase (do in incognito)
+- [~] FE `Register.tsx` posts to `/api/registrations`; manual `safeParse` → react-hook-form `setError` per field *(agent building)*
+- [~] Success panel shows the registered event's title *(agent building)*
+- [~] BE inserts into Supabase `registrations` table *(agent building)*
+- [ ] Smoke test: a real submit lands a row in Supabase (do in incognito — needs live env + table)
 
 ---
 
 ## 7. Testing — *Day 2 afternoon (timeboxed ~1h)*
 
-- [ ] `tests/schemas.test.ts` — 6–8 cases: valid passes; bad email, short/bad phone, unknown event_id, missing name, notes>400 → fail with correct messages
-- [ ] `tests/events.test.ts` — filter by category; search by partial name (case-insensitive); combined filter+search
+- [~] `tests/schemas.test.ts` — 6–8 cases: valid passes; bad email, short/bad phone, unknown event_id, missing name, notes>400 → fail with correct messages *(agent, after API lands)*
+- [~] `tests/events.test.ts` — filter by category; search by partial name (case-insensitive); combined filter+search *(agent, after API lands)*
 - [ ] `npm test` green → screenshot → `docs/tests-passing.png`
 
 ---
@@ -115,9 +115,9 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 
 ## 9. Repo config + README — *Day 2 evening*
 
-- [ ] `.env.example` — blank `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`
-- [ ] `.gitignore` — node_modules, .env, dist (verify no secrets)
-- [ ] `README.md` per §7: description + live URL + docs URL · screenshots (desktop+mobile) · features checklist · tech stack table · API section + `/api/docs` link · setup & run · testing + passing screenshot · **AI Usage** section (specific)
+- [~] `.env.example` — blank `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` *(agent building)*
+- [~] `.gitignore` — node_modules, .env, dist (verify no secrets) *(agent building)*
+- [~] `README.md` per §7: description + live URL + docs URL · screenshots (desktop+mobile) · features checklist · tech stack table · API section + `/api/docs` link · setup & run · testing + passing screenshot · **AI Usage** section (specific) *(agent building)*
 - [ ] `docs/` — screenshot-home.png, screenshot-mobile.png, lighthouse.png, tests-passing.png
 
 ---
@@ -192,3 +192,13 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` pending
 - **No `@hookform/resolvers`:** zod v3/v4 peer conflict; replaced with a ~15-line `safeParse` adapter so the shared-schema story survives and we're version-independent.
 - **Single permitted animation:** staggered fade-up of event cards (`@keyframes fade-up` in `index.css`). Everything else stays still.
 - **Anti-scope-creep:** NO admin panel, auth, dark-mode toggle, or CMS. Ship the 5 required features excellently.
+
+---
+
+## Session log
+
+### 2026-08-02 — multi-agent build session
+- git repo initialized (`main`), baseline commit `21f353b` (scaffold + tokens + data + components + lib + schemas).
+- `package.json` scripts: `dev` = concurrently (Vite :5173 + API :8787), `test` = vitest, `test:watch`.
+- Spawned 3 parallel agents (Wave 1): **UI** (Register page + App shell + import cleanup), **API** (Hono/OpenAPI + Scalar + Vercel handler + dev server), **Ops** (apps-script ×2 + README + .env.example + schema.sql + .gitignore).
+- Wave 2 (tests) starts once the API agent lands, then review/test/fix-to-green, then commit milestones.

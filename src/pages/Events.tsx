@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getEvents, filterLocal } from "../lib/api";
-import { CATEGORIES } from "../lib/schemas";
+import type { Event } from "../lib/schemas";
 import EventCard from "../components/EventCard";
 import FilterBar from "../components/FilterBar";
 
@@ -13,7 +13,6 @@ export default function Events() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [filtered, setFiltered] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterOpts, setFilterOpts] = useState<{ category?: string; q?: string }>({});
 
   useEffect(() => {
     getEvents().then((evs) => {
@@ -24,7 +23,6 @@ export default function Events() {
   }, []);
 
   const handleFilter = (opts: { category?: string; q?: string }) => {
-    setFilterOpts(opts);
     const result = filterLocal(allEvents, opts);
     setFiltered(result);
   };
@@ -96,5 +94,3 @@ export default function Events() {
     </div>
   );
 }
-
-import type { Event } from "../lib/schemas";

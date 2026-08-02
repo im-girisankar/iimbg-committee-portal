@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CATEGORIES } from "../lib/schemas";
 
@@ -11,7 +11,7 @@ const categories = ["All", ...CATEGORIES];
 
 export default function FilterBar({ onFilter }: { onFilter: (opts: { category?: string; q?: string }) => void }) {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All");
 
