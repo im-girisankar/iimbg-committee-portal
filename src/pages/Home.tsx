@@ -73,7 +73,7 @@ export default function Home() {
                 to="/team"
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-border text-primary font-display font-semibold text-lg rounded-2xl hover:border-accent hover:text-accent hover:bg-accent/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
-                Join the Team
+                Meet the Team
               </Link>
             </motion.div>
 
