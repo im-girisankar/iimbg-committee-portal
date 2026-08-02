@@ -1,0 +1,86 @@
+﻿[
+  {
+    "id": "tech-tuesday-genai-08",
+    "title": "Tech Tuesday: GenAI for Case Prep",
+    "category": "Workshop",
+    "date": "2026-08-14",
+    "time": "18:00",
+    "venue": "Auditorium",
+    "description": "A 90-minute hands-on session on weaving LLMs into case analysis and interview prep.",
+    "seats": 120,
+    "image": "/images/events/tech-tuesday.svg",
+    "featured": true
+  },
+  {
+    "id": "data-dash-hackathon-09",
+    "title": "Data Dash — Analytics Hackathon",
+    "category": "Competition",
+    "date": "2026-08-22",
+    "time": "09:30",
+    "venue": "Classroom Block A",
+    "description": "Six hours, one dirty dataset, one story. Best visual insight takes the trophy.",
+    "seats": 60,
+    "image": "/images/events/data-dash.svg",
+    "featured": true
+  },
+  {
+    "id": "cto-fireside-08",
+    "title": "Fireside with a CTO: Building at Scale",
+    "category": "Speaker Session",
+    "date": "2026-09-03",
+    "time": "17:00",
+    "venue": "Auditorium",
+    "description": "An open conversation on architecture, hiring, and the messy first year of a startup.",
+    "seats": 200,
+    "image": "/images/events/fireside.svg",
+    "featured": true
+  },
+  {
+    "id": "av-workshop-08",
+    "title": "AV Bootcamp: Run Any Event in the Hall",
+    "category": "Workshop",
+    "date": "2026-08-19",
+    "time": "16:30",
+    "venue": "Auditorium",
+    "description": "From projector to mixer to mics — learn to operate the auditorium AV chain end to end.",
+    "seats": 40,
+    "image": "/images/events/av-bootcamp.svg",
+    "featured": false
+  },
+  {
+    "id": "gaming-night-08",
+    "title": "Gaming Night: LAN + Indie Showcase",
+    "category": "Social",
+    "date": "2026-08-27",
+    "time": "20:00",
+    "venue": "Student Common Room",
+    "description": "Casual tournaments, indie game demos, and a quiet corner for the non-gamers.",
+    "seats": 80,
+    "image": "/images/events/gaming-night.svg",
+    "featured": false
+  },
+  {
+    "id": "orientation-support-08",
+    "title": "Orientation IT Support Drive",
+    "category": "Social",
+    "date": "2026-08-30",
+    "time": "10:00",
+    "venue": "Lobby",
+    "description": "Help the new batch get campus wifi, mail, and LMS set up — drop in, stay an hour.",
+    "seats": 150,
+    "image": "/images/events/orientation.svg",
+    "featured": false
+  },
+  {
+    "id": "infra-deepdive-09",
+    "title": "Infra Deep Dive: How Campus Wifi Actually Works",
+    "category": "Speaker Session",
+    "date": "2026-09-10",
+    "time": "18:00",
+    "venue": "Classroom Block B",
+    "description": "A no-slides walkthrough of the network stack powering 2000 concurrent devices.",
+    "seats": 90,
+    "image": "/images/events/infra-deepdive.svg",
+    "featured": false
+  }
+]

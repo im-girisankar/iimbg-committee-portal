@@ -1,0 +1,58 @@
+﻿[
+  {
+    "id": "aanya-raj",
+    "name": "Aanya Raj",
+    "role": "Committee Lead",
+    "bio": "Coordinates the calendar and owns event uptime.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=AR&radius=50&backgroundType=gradient&backgroundColor=c9a227,8d7019",
+    "vertical": "Operations"
+  },
+  {
+    "id": "rohan-mehta",
+    "name": "Rohan Mehta",
+    "role": "Infrastructure Lead",
+    "bio": "Runs the campus network and event AV chain.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=RM&radius=50&backgroundType=gradient&backgroundColor=6b7f5e,4a5a40",
+    "vertical": "Infrastructure"
+  },
+  {
+    "id": "ishaan-bose",
+    "name": "Ishaan Bose",
+    "role": "Web & API",
+    "bio": "Builds the portal and keeps the API honest.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=IB&radius=50&backgroundType=gradient&backgroundColor=c9a227,8d7019",
+    "vertical": "Development"
+  },
+  {
+    "id": "nika-sharma",
+    "name": "Nika Sharma",
+    "role": "Data & Automation",
+    "bio": "Owns the feedback pipeline and dashboards.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=NS&radius=50&backgroundType=gradient&backgroundColor=6b7f5e,4a5a40",
+    "vertical": "Development"
+  },
+  {
+    "id": "dhruv-nair",
+    "name": "Dhruv Nair",
+    "role": "Support Engineer",
+    "bio": "First responder for classroom and auditorium AV issues.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=DN&radius=50&backgroundType=gradient&backgroundColor=c9a227,8d7019",
+    "vertical": "Support"
+  },
+  {
+    "id": "tara-verma",
+    "name": "Tara Verma",
+    "role": "Support Engineer",
+    "bio": "On-call for LMS, mail, and wifi setup drives.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=TV&radius=50&backgroundType=gradient&backgroundColor=6b7f5e,4a5a40",
+    "vertical": "Support"
+  },
+  {
+    "id": "kai-singh",
+    "name": "Kai Singh",
+    "role": "Events Coordinator",
+    "bio": "Bridges the IT calendar with the clubs and committees.",
+    "avatar": "https://api.dicebear.com/9.x/initials/svg?seed=KS&radius=50&backgroundType=gradient&backgroundColor=c9a227,8d7019",
+    "vertical": "Operations"
+  }
+]
