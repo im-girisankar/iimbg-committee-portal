@@ -1,10 +1,10 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
-import eventsData from "../src/data/events.json";
-import teamData from "../src/data/team.json";
-import type { Event, TeamMember, RegistrationResponse } from "../src/lib/schemas";
-import { registrationSchema, registrationResponseSchema, eventSchema, teamMemberSchema, CATEGORIES } from "../src/lib/schemas";
-import { getSupabase } from "../src/lib/supabase";
+import eventsData from "../src/data/events.json" with { type: "json" };
+import teamData from "../src/data/team.json" with { type: "json" };
+import type { Event, TeamMember, RegistrationResponse } from "../src/lib/schemas.js";
+import { registrationSchema, registrationResponseSchema, eventSchema, teamMemberSchema, CATEGORIES } from "../src/lib/schemas.js";
+import { getSupabase } from "../src/lib/supabase.js";
 
 /* ─────────────────────────────────────────────────────────────
    Dependency injection factory — enables tests to inject fake
@@ -66,8 +66,11 @@ export function createApp(deps: Deps = {}) {
     const { category, q } = c.req.valid("query");
     let out = events;
 
-    if (category && category !== "All") {
-      out = out.filter((e) => e.category === category);
+    // category can be "All" from frontend, but Zod validates it's one of CATEGORIES
+    // Cast to string to allow "All" comparison
+    const cat = category as string | undefined;
+    if (cat && cat !== "All") {
+      out = out.filter((e) => e.category === cat);
     }
     if (q) {
       const query = q.toLowerCase().trim();
