@@ -32,19 +32,19 @@ export default function Navbar() {
     <motion.nav
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-200 ${
         scrolled
-          ? "h-16 bg-[var(--color-surface)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-surface)]/90 border-b border-[var(--color-border)] shadow-[var(--shadow-soft)]"
+          ? "h-[72px] bg-[var(--color-surface)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-surface)]/90 border-b border-[var(--color-border)] shadow-[var(--shadow-soft)]"
           : "h-20 bg-[var(--color-surface)] border-b border-[var(--color-border)]"
       }`}
       initial={false}
       animate={{ boxShadow: scrolled ? "var(--shadow-soft)" : "none" }}
       transition={{ duration: 0.2 }}
     >
-      <div className="mx-auto max-w-[1120px] px-4">
-        <div className="flex h-full items-center justify-between">
+      <div className="mx-auto flex h-full max-w-[1120px] px-4">
+        <div className="flex h-full w-full items-center justify-between">
           {/* Logo - Dual logos side by side */}
           <NavLink
             to="/"
-            className="flex items-center gap-4 font-display font-semibold transition-colors shrink-0"
+            className="flex items-center gap-3 font-display font-semibold transition-colors shrink-0"
             aria-label="Envision IT Committee Home"
           >
             {/* Logo wrapper for alignment */}
