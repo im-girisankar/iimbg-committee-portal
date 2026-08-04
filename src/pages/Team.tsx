@@ -1,92 +1,99 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { getTeam } from "../lib/api";
-import type { TeamMember } from "../lib/schemas";
-import TeamCard from "../components/TeamCard";
+import { cn } from "@/lib/cn";
+import { PageHeader } from "@/components/app/page-header";
+import { TeamCard, TeamCardSkeleton } from "@/components/app/team-card";
+import { useDelayedLoading } from "@/lib/use-delayed-loading";
+import { getTeam } from "@/lib/api";
+import type { TeamMember } from "@/lib/schemas";
 
-/* ─────────────────────────────────────────────────────────────
-   Team page — Envision Entrepreneurship Cell team.
-   Clean grid with staggered fade-up animations.
-   ───────────────────────────────────────────────────────────── */
+// The first two entries in team.json are President and Vice President — the
+// spec ("04-PAGES.md §P3") calls these out as a distinct 2-up leadership row.
+const LEADERSHIP_COUNT = 2;
+const ROSTER_SKELETON_COUNT = 12 - LEADERSHIP_COUNT;
+
+const leadershipGrid = "grid grid-cols-1 gap-4 sm:grid-cols-2";
+const rosterGrid = "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5";
+const groupHeading = "border-t border-border pt-3 text-micro uppercase text-fg-subtle";
 
 export default function Team() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const showSkeleton = useDelayedLoading(loading);
 
   useEffect(() => {
-    getTeam().then((m) => {
-      setMembers(m);
+    let cancelled = false;
+    getTeam().then((data) => {
+      if (cancelled) return;
+      setMembers(data);
       setLoading(false);
     });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="pt-24 pb-20 px-4 bg-background">
-        <div className="mx-auto max-w-[1120px]">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-            }}
-            className="animate-pulse space-y-6"
-          >
-            <motion.div className="h-10 bg-background rounded w-1/4" />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
-                <motion.div
-                  key={i}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-                  }}
-                  className="bg-surface border border-border rounded-2xl h-80"
-                />
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
+  const leadership = members.slice(0, LEADERSHIP_COUNT);
+  // `vertical` is unique per member in team.json today, so grouping strictly
+  // by that field would produce ten one-person sections — reading the data
+  // faithfully, not inventing categories to fill it out. Rather than render
+  // ten single-item headings (worse than the flat grid it replaces), the
+  // remaining members render as one ungrouped roster below the leadership
+  // row. If verticals ever diverge into real categories, this still reads
+  // correctly since it never hardcodes a member.
+  const roster = members.slice(LEADERSHIP_COUNT);
 
   return (
-    <div className="pt-24 pb-20 px-4 bg-background">
-      <div className="mx-auto max-w-[1120px]">
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
-        >
-          <h1 className="font-display font-bold text-3xl md:text-4xl text-primary mb-2">
-            The Team
-          </h1>
-          <p className="text-secondary">
-            The people driving Envision's mission to build the next generation of founders.
-          </p>
-        </motion.header>
+    <div className="container-page pt-10 pb-16 lg:pt-14 lg:pb-24">
+      <PageHeader title="Team" subtitle="The people building Envision at IIM Bodh Gaya." />
 
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-          }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          role="list"
-          aria-label="Team members"
-        >
-          {members.map((member, i) => (
-            <motion.div key={member.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}>
-              <TeamCard member={member} index={i} />
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+      {showSkeleton && (
+        <>
+          <ul className={leadershipGrid} aria-hidden="true">
+            {Array.from({ length: LEADERSHIP_COUNT }).map((_, i) => (
+              <li key={i}>
+                <TeamCardSkeleton size="lg" />
+              </li>
+            ))}
+          </ul>
+          <ul className={cn(rosterGrid, "mt-10")} aria-hidden="true">
+            {Array.from({ length: ROSTER_SKELETON_COUNT }).map((_, i) => (
+              <li key={i}>
+                <TeamCardSkeleton />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {!loading && (
+        <>
+          {leadership.length > 0 && (
+            <section>
+              <h2 className={groupHeading}>Leadership</h2>
+              <ul className={cn(leadershipGrid, "mt-4")} aria-label="Leadership">
+                {leadership.map((member) => (
+                  <li key={member.id}>
+                    <TeamCard member={member} size="lg" />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {roster.length > 0 && (
+            <section className="mt-10">
+              <h2 className={groupHeading}>Team</h2>
+              <ul className={cn(rosterGrid, "mt-4")} aria-label="Team members">
+                {roster.map((member) => (
+                  <li key={member.id}>
+                    <TeamCard member={member} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </>
+      )}
     </div>
   );
 }
