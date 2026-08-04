@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 
 const button = cva(
   "inline-flex items-center justify-center gap-1.5 rounded-sm font-medium whitespace-nowrap " +
-  "transition-colors duration-[--dur-fast] " +
+  "transition-colors duration-[var(--dur-fast)] " +
   "disabled:pointer-events-none disabled:opacity-50 " +
   "[&_svg]:size-4 [&_svg]:shrink-0",
   {

@@ -8,7 +8,7 @@ export function Select({ className, ...props }: React.ComponentProps<"select">) 
         className={cn(
           "w-full h-9 pl-3 pr-9 rounded-sm appearance-none",
           "border border-border-strong bg-surface text-ui text-fg",
-          "transition-colors duration-[--dur-fast] hover:border-fg-faint",
+          "transition-colors duration-[var(--dur-fast)] hover:border-fg-faint",
           "aria-[invalid=true]:border-danger-border disabled:opacity-50",
           className,
         )}

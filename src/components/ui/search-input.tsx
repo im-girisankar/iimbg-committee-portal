@@ -68,7 +68,7 @@ export function SearchInput({
         className={cn(
           "h-9 w-full rounded-sm border border-border-strong bg-surface pl-9 text-ui text-fg",
           local ? "pr-9" : "pr-3",
-          "placeholder:text-fg-subtle transition-colors duration-[--dur-fast] hover:border-fg-faint",
+          "placeholder:text-fg-subtle transition-colors duration-[var(--dur-fast)] hover:border-fg-faint",
         )}
       />
       {local && (

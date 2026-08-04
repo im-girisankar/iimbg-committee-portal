@@ -2,7 +2,7 @@ import { cn } from "@/lib/cn";
 
 const base =
   "w-full rounded-sm border border-border-strong bg-surface text-ui text-fg " +
-  "placeholder:text-fg-subtle transition-colors duration-[--dur-fast] " +
+  "placeholder:text-fg-subtle transition-colors duration-[var(--dur-fast)] " +
   "hover:border-fg-faint " +
   "aria-[invalid=true]:border-danger-border " +
   "disabled:opacity-50 disabled:cursor-not-allowed";
