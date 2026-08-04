@@ -8,6 +8,10 @@ worked. Phases are ordered so nothing is ever built twice.
 require editing `api/`, `lib/schemas.ts`, `lib/api.ts`, or `lib/form.ts` — stop, you have
 misread the task.
 
+**Second rule for every phase:** `07-MOBILE.md` is binding. Mobile is the base case, not a final
+QA pass. Write unprefixed classes for 360px and add breakpoints upward. No phase is complete
+until `npm run check:mobile` exits 0 at 320 / 360 / 390 / 430 / 768px on every route.
+
 ---
 
 ## Phase map

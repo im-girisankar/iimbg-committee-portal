@@ -14,6 +14,7 @@ A complete UI/UX revamp of the IIM Bodh Gaya Envision × IT Committee portal.
 | 04 | [`04-PAGES.md`](./04-PAGES.md) | Building a page. Analyse → critique → redesign → acceptance criteria. |
 | 05 | [`05-EXECUTION.md`](./05-EXECUTION.md) | **Doing the work.** 9 phases, verification, copy-paste prompts. |
 | 06 | [`06-CLEANUP.md`](./06-CLEANUP.md) | Deleting things. Verified manifest of 12.3 MB of dead assets. |
+| 07 | [`07-MOBILE.md`](./07-MOBILE.md) | **Binding on every phase.** Mobile-first rules, test widths, and `npm run check:mobile`. |
 
 ## Where it stands
 

@@ -2,19 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>try{var t=localStorage.getItem('bodhi-theme')||'system';
+    var d=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);
+    document.documentElement.classList.toggle('dark',d);
+    document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){}</script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="mask-icon" href="/icon-mono.svg" color="#0F766E" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0F766E" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090B" media="(prefers-color-scheme: dark)" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta
       name="description"
       content="IIM Bodh Gaya IT Committee Portal — browse events, meet the team, and register."
     />
-    <!-- Fonts: Space Grotesk (display) · Inter (body) · JetBrains Mono (data) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <title>IIM Bodh Gaya — IT Committee Portal</title>
   </head>
   <body>
