@@ -26,12 +26,20 @@ var EMAIL_LOG_COLUMNS = ["Timestamp", "Recipient", "Event", "Status"];
  */
 function onFormSubmit(e) {
   var named = (e && e.namedValues) || {};
-  var eventName = first_(named["Which event did you attend?"]) || "the event";
-  var rating = parseInt(first_(named["Overall rating"]), 10) || 0;
-  // Built-in "Collect email addresses" uses the key "Email Address";
-  // a custom short-answer field would use its own label (e.g. "Email").
-  var email = (first_(named["Email"]) || first_(named["Email Address"]) || "").trim();
-
+  var eventName = first_(named["Which event did you attend? "]) || "the event";
+  var rating = parseInt(first_(named["  Overall Experience  "]), 10);
+  if (isNaN(rating)) {
+    rating = 5; // or 0 if you prefer
+  }
+  // Try every reasonable email field
+  var email =
+  (
+    first_(named["Email Address"]) ||
+    first_(named["Email"]) ||
+    first_(named["Email address"]) ||
+    first_(named["Your email"]) ||
+    ""
+  ).trim();
   var log = setupEmailLogTab_();
 
   // Edge case: missing/invalid email -> log SKIPPED, never throw.
@@ -60,7 +68,7 @@ function onFormSubmit(e) {
  * @return {string} HTML body.
  */
 function buildThankYouHtml_(eventName, rating) {
-  var filled = clamp_(rating, 1, 5);
+  var filled = clamp_(rating || 0, 0, 5);
   var empty = 5 - filled;
   var stars =
     '<span style="color:#C9A227;">' + "★".repeat(filled) + "</span>" +
