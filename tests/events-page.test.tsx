@@ -77,10 +77,13 @@ describe("Events page — URL-driven filters", () => {
   it("renders only Workshop events for /events?category=Workshop (guards D1)", async () => {
     renderAt("/events?category=Workshop");
 
+    // Await the count first: it renders as soon as the fetch resolves, whereas
+    // the cards are additionally gated behind `useDelayedLoading`'s minimum
+    // skeleton hold. Querying for a title first races that hold.
+    expect(await screen.findByText("2 events")).toBeInTheDocument();
     expect(await screen.findByText("Founder Fridays")).toBeInTheDocument();
-    expect(screen.getByText("Build Weekend")).toBeInTheDocument();
+    expect(await screen.findByText("Build Weekend")).toBeInTheDocument();
     expect(screen.queryByText("Pitch Nexus")).not.toBeInTheDocument();
-    expect(screen.getByText("2 events")).toBeInTheDocument();
   });
 
   it("renders only matching events for /events?q=<term> (guards D1)", async () => {

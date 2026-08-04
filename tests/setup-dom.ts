@@ -12,8 +12,14 @@
  * convincingly like a component bug.
  */
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach } from "vitest";
+
+/* The pages gate their content behind `useDelayedLoading` (120ms before the
+   skeleton shows, then a 200ms minimum hold), so a `findBy*` can legitimately
+   need ~350ms. Testing Library's 1000ms default left almost no headroom and
+   the suite flaked under parallel load. */
+configure({ asyncUtilTimeout: 3000 });
 
 afterEach(() => {
   cleanup();

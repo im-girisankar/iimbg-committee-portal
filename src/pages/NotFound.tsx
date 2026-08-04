@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 /**
  * Extracted from App.tsx per 04-PAGES.md §P5. The old version was built on
@@ -35,7 +34,7 @@ export default function NotFound() {
           </Button>
         </div>
 
-        <Separator className="my-8" />
+        <hr role="separator" className="my-8 border-0 border-t border-border" />
 
         <p className="text-micro uppercase text-fg-subtle">Try one of these</p>
         <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-ui">

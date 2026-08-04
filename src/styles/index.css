@@ -161,7 +161,6 @@
 
   @media (pointer: coarse) {
     :where(button, a[role="button"], [role="tab"]) { min-block-size: 44px; }
-    :where(input, select, textarea) { font-size: 16px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -177,6 +176,14 @@
 
 /* ─── Reusable utilities ──────────────────────────────────────────── */
 @utility container-page {
+  /* `inline-size: 100%` is required, not cosmetic. `margin-inline: auto` is an
+     auto margin on the cross axis of the page's flex-column layout, and an
+     auto cross-axis margin disables `align-self: stretch` — the element then
+     falls back to fit-content and sizes to its MAX-content, which made
+     /events render 460px wide inside a 390px viewport. A definite width
+     restores stretch; the auto margins still centre it once max-inline-size
+     takes over on wide screens. */
+  inline-size: 100%;
   margin-inline: auto;
   max-inline-size: var(--container);
   padding-inline: 1rem;
@@ -204,3 +211,30 @@
 @utility animate-enter { animation: enter var(--dur) var(--ease) both; }
 
 @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* ─── Deliberately UNLAYERED ──────────────────────────────────────────
+   iOS Safari zooms the viewport whenever a focused control has a
+   font-size below 16px, and then leaves the page zoomed. Our controls
+   are 14px (`text-ui`), so this would fire on every field of the
+   registration form.
+
+   This rule has to beat those utilities. Inside `@layer base` it lost —
+   base is ordered before `utilities`, and `:where()` contributes zero
+   specificity, so `text-ui` won and the fix silently did nothing
+   (verified: all six Register fields still computed 14px under
+   `pointer: coarse`). Unlayered declarations outrank every layer, which
+   is exactly the leverage needed here.
+
+   This is the one intentional exception to the "element rules live in
+   @layer base" convention — the rule that fixing the original cascade
+   bug was about. Keep it narrow: pointer-coarse only, controls only.
+
+   Do NOT "fix" this with maximum-scale/user-scalable=no on the viewport
+   meta — that breaks pinch-zoom and fails WCAG 1.4.4.               */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

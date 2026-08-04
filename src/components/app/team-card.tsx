@@ -16,7 +16,7 @@ interface TeamCardProps {
  * instead as the grouping key the page (`pages/Team.tsx`) reads.
  *
  * Non-interactive: no hover state, no shadow. The old card faked an
- * affordance with `hover:shadow-[var(--shadow-hover)]`, a token that was
+ * affordance with a hover elevation whose shadow token was
  * never defined (D12) — do not reintroduce it.
  */
 export function TeamCard({ member, size = "default" }: TeamCardProps) {
