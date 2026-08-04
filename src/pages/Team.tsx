@@ -12,7 +12,10 @@ const LEADERSHIP_COUNT = 2;
 const ROSTER_SKELETON_COUNT = 12 - LEADERSHIP_COUNT;
 
 const leadershipGrid = "grid grid-cols-1 gap-4 sm:grid-cols-2";
-const rosterGrid = "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5";
+/* 2-up from 360px (where the density gain shows on a phone), but a single
+   column below that — at 320px two cards plus the gap overflow by 2px. */
+const rosterGrid =
+  "grid grid-cols-1 gap-4 min-[360px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5";
 const groupHeading = "border-t border-border pt-3 text-micro uppercase text-fg-subtle";
 
 export default function Team() {

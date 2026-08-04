@@ -1,212 +1,182 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { getEvents } from "../lib/api";
-import type { Event } from "../lib/schemas";
-import EventCard from "../components/EventCard";
+import { ArrowRight, MapPin, Users } from "lucide-react";
+import { Section } from "@/components/app/section";
+import { EventCard } from "@/components/app/event-card";
+import { CategoryDot } from "@/components/app/category-dot";
+import { Card, CardBody } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDelayedLoading } from "@/lib/use-delayed-loading";
+import { getEvents } from "@/lib/api";
+import { formatDateTime, isUpcoming } from "@/lib/format";
+import type { Event } from "@/lib/schemas";
 
-/* ─────────────────────────────────────────────────────────────
-   Home page — Envision Entrepreneurship Cell, IIM Bodh Gaya
-   Clean, minimal hero with staggered fade-up animations.
-   Featured events grid below (max 3).
-   ───────────────────────────────────────────────────────────── */
-
+/**
+ * Home — left-aligned hero, a single "Next up" card (the highest-value
+ * block, costs no new request), and a featured grid reusing `EventCard`.
+ * The stat strip from 04-PAGES.md §P1 is a scope cut (05-EXECUTION.md
+ * "SCOPE CUTS") — deliberately not built. No mount animations.
+ */
 export default function Home() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    getEvents().then((evs) => {
+      if (!active) return;
+      setEvents(evs);
+      setIsFetching(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const showSkeleton = useDelayedLoading(isFetching);
+
+  // Soonest upcoming event; falls back to the first featured event when
+  // nothing is upcoming (e.g. a stale data snapshot).
+  const nextUp = useMemo(() => {
+    const upcoming = events
+      .filter((e) => isUpcoming(e.date))
+      .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    return upcoming[0] ?? events.find((e) => e.featured) ?? null;
+  }, [events]);
+
+  const featured = useMemo(() => events.filter((e) => e.featured).slice(0, 3), [events]);
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="relative pt-20 pb-28 px-4 md:pt-32 md:pb-36">
-        <div className="mx-auto max-w-[1120px]">
-          <div className="text-center max-w-3xl mx-auto">
-            {/* Optional badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border bg-surface/80 backdrop-blur-sm mb-8"
-            >
-              <span className="mono text-xs">Powered by</span>
-              <span className="font-display font-semibold text-primary">Envision</span>
-              <span className="text-secondary">×</span>
-              <span className="font-display font-semibold text-primary">IT Committee</span>
-            </motion.div>
+    <div className="container-page pt-10 pb-16 lg:pt-14 lg:pb-24">
+      {/* Hero — left-aligned, not centred */}
+      <div className="max-w-[58ch]">
+        <p className="flex items-center gap-2 text-micro uppercase text-fg-subtle">
+          <span className="size-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+          Envision · Entrepreneurship Cell
+        </p>
 
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display font-semibold text-4xl md:text-5xl lg:text-6xl leading-tight text-primary mb-6 tracking-tight"
-            >
-              Building the next generation of founders at IIM Bodh Gaya
-            </motion.h1>
+        <h1 className="mt-4 max-w-[18ch] text-[2rem] leading-[1.05] font-semibold tracking-[-0.032em] text-fg sm:text-[2.5rem] md:text-[2.75rem]">
+          Building the next generation of founders at IIM Bodh Gaya
+        </h1>
 
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-10 leading-relaxed"
-            >
-              Envision is the Entrepreneurship Cell of IIM Bodh Gaya. We empower aspiring founders
-              through events, mentorship, funding access, and a vibrant community of builders.
-            </motion.p>
+        <p className="mt-4 max-w-[58ch] text-prose text-fg-muted">
+          Envision is the Entrepreneurship Cell of IIM Bodh Gaya. Events, mentorship, funding
+          access, and a community of builders.
+        </p>
 
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
-              <Link
-                to="/events"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-accent text-white font-display font-semibold text-lg rounded-2xl hover:bg-accent/90 transition-all hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-              >
-                Explore Events
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-
-              <Link
-                to="/team"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-border text-primary font-display font-semibold text-lg rounded-2xl hover:border-accent hover:text-accent hover:bg-accent/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-              >
-                Meet the Team
-              </Link>
-            </motion.div>
-
-            {/* Subtle illustration / visual element */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-16 relative"
-              aria-hidden="true"
-            >
-              <div className="relative mx-auto max-w-4xl">
-                {/* Decorative geometric shapes */}
-                <div className="absolute -top-8 -right-8 w-32 h-32 rounded-2xl bg-accent/10 blur-2xl" />
-                <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-2xl bg-accent-secondary/10 blur-2xl" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-2xl border border-border bg-surface/50 backdrop-blur-sm flex items-center justify-center">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-accent/50">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+        <div className="mt-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+          <Button asChild variant="primary" size="xl" className="w-full sm:w-auto">
+            <Link to="/events">Browse events</Link>
+          </Button>
+          <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
+            <Link to="/team">Meet the team</Link>
+          </Button>
         </div>
-      </section>
+      </div>
 
-      {/* Featured events */}
-      <section className="px-4 pb-20 md:pb-28">
-        <div className="mx-auto max-w-[1120px]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="font-display font-semibold text-2xl md:text-3xl text-primary"
-            >
-              Featured Events
-            </motion.h2>
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <Link
-                to="/events"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent/70 transition-colors"
-              >
-                View all
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </motion.div>
-          </div>
+      {/* Next up — the single highest-value block; no new request */}
+      <div className="mt-16 lg:mt-24">
+        <p className="mb-3 text-micro uppercase text-fg-subtle">Next up</p>
+        {showSkeleton ? (
+          <NextUpSkeleton />
+        ) : nextUp ? (
+          <NextUpCard event={nextUp} />
+        ) : null}
+      </div>
 
-          <FeaturedEventsGrid />
-        </div>
-      </section>
+      {/* Featured events — omitted entirely when there are none */}
+      {(showSkeleton || featured.length > 0) && (
+        <Section
+          title="Featured events"
+          action={
+            <Link
+              to="/events"
+              className="inline-flex items-center gap-1 text-label text-fg-subtle transition-colors duration-[var(--dur-fast)] hover:text-fg"
+            >
+              View all
+              <ArrowRight className="size-3.5" aria-hidden="true" />
+            </Link>
+          }
+        >
+          {showSkeleton ? (
+            <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="Loading events">
+              {[0, 1, 2].map((i) => (
+                <li key={i}>
+                  <FeaturedCardSkeleton />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((event) => (
+                <li key={event.id}>
+                  <EventCard event={event} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Section>
+      )}
     </div>
   );
 }
 
-/* Client-side component to fetch and render featured events */
-function FeaturedEventsGrid() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getEvents().then((all) => {
-      setEvents(all.filter((e) => e.featured).slice(0, 3));
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return (
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-        }}
-        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        aria-busy="true"
-      >
-        {[1, 2, 3].map((i) => (
-          <motion.div
-            key={i}
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-            }}
-            className="bg-surface border border-border rounded-2xl h-80 animate-pulse"
-          />
-        ))}
-      </motion.div>
-    );
-  }
-
-  if (events.length === 0) {
-    return (
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="text-center text-secondary py-16"
-      >
-        No featured events right now.{" "}
-        <Link to="/events" className="text-accent underline underline-offset-2 hover:text-accent/70 transition-colors">
-          Check all events
-        </Link>
-        .
-      </motion.p>
-    );
-  }
-
+function NextUpCard({ event }: { event: Event }) {
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-      }}
-      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-    >
-      {events.map((event, i) => (
-        <motion.div key={event.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}>
-          <EventCard event={event} index={i} />
-        </motion.div>
-      ))}
-    </motion.div>
+    <Card>
+      <CardBody className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-caption text-fg-muted">
+          <span className="inline-flex items-center gap-1.5">
+            <CategoryDot category={event.category} />
+            {event.category}
+          </span>
+          <span className="numeric text-fg-subtle">{formatDateTime(event.date, event.time)}</span>
+          <span className="inline-flex items-center gap-1.5 text-fg-subtle">
+            <MapPin className="size-3.5" aria-hidden="true" />
+            {event.venue}
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-fg-subtle">
+            <Users className="size-3.5" aria-hidden="true" />
+            {event.seats} seats
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-title-2 text-fg">{event.title}</h2>
+          <Button asChild variant="primary" size="lg" className="w-full shrink-0 sm:w-auto">
+            <Link to={`/register?event=${event.id}`}>Register</Link>
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
+
+function NextUpSkeleton() {
+  return (
+    <Card>
+      <CardBody className="flex flex-col gap-3">
+        <Skeleton className="h-4 w-2/3" />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-9 w-full sm:w-28" />
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
+
+function FeaturedCardSkeleton() {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-md border border-border">
+      <Skeleton className="aspect-[3/2] max-h-[180px] w-full rounded-none sm:max-h-none" />
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-5 w-4/5" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    </div>
   );
 }

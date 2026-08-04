@@ -20,7 +20,7 @@ function ScrollToTop() {
 /* ─────────────────────────────────────────────────────────────
    App shell — Navbar + Outlet + Footer, with ScrollToTop.
    The nav offset is applied ONCE here via padding-top: var(--nav-h) —
-   pages must never hardcode pt-24 again.
+   pages must never hardcode a top offset again.
    ───────────────────────────────────────────────────────────── */
 
 function Layout() {

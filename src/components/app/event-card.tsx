@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, MapPin, Users } from "lucide-react";
 import { Card, CardBody, CardMedia } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CategoryDot } from "./category-dot";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/cn";
@@ -48,7 +47,11 @@ export function EventCard({ event, className }: EventCardProps) {
             <span className="numeric text-caption text-fg-subtle">
               {formatDateTime(event.date, event.time)}
             </span>
-            {event.featured && <Badge variant="brand">Featured</Badge>}
+            {event.featured && (
+              <span className="inline-flex h-5 items-center gap-1.5 rounded-xs border border-brand-border bg-brand-subtle px-2 text-caption font-medium text-brand-text">
+                Featured
+              </span>
+            )}
           </div>
 
           <h3 className="text-title-3 text-fg" title={event.title}>

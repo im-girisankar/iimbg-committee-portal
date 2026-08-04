@@ -37,7 +37,16 @@ export function Segmented<T extends string>({
       role="radiogroup"
       aria-label={aria["aria-label"]}
       className={cn(
-        "inline-flex max-w-full gap-0.5 overflow-x-auto rounded-sm border border-border bg-bg-muted p-0.5",
+        /* Block-level `flex` on mobile, `inline-flex` only from `sm`.
+           This is load-bearing. `inline-flex` is shrink-to-fit: it sizes to
+           its content (426px for five categories) regardless of the viewport,
+           so `overflow-x-auto` never engages and that width propagates up the
+           tree — /events rendered 460px wide on a 390px screen. `min-w-0`
+           cannot fix it either, since the automatic minimum size applies to
+           the main axis and here the page stacks in a column.
+           Filling the row and scrolling internally is also the better mobile
+           behaviour; the inline pill returns once there is room for it. */
+        "flex w-full gap-0.5 overflow-x-auto rounded-sm border border-border bg-bg-muted p-0.5 sm:inline-flex sm:w-auto sm:max-w-full",
         "[scrollbar-width:none] snap-x [&::-webkit-scrollbar]:hidden",
         className,
       )}

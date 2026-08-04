@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { Label } from "./label";
 
 interface FieldAria {
   id: string;
@@ -31,7 +30,7 @@ export function Field({ id, label, required, description, error, className, chil
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      <Label htmlFor={id}>
+      <label htmlFor={id} className="text-label text-fg">
         {label}
         {required && (
           <>
@@ -42,7 +41,7 @@ export function Field({ id, label, required, description, error, className, chil
             <span className="sr-only"> (required)</span>
           </>
         )}
-      </Label>
+      </label>
       {children({ id, "aria-invalid": Boolean(error), "aria-describedby": describedBy })}
       {description && !error && (
         <p id={descId} className="text-caption text-fg-subtle">

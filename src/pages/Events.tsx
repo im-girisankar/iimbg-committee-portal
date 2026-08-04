@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/app/page-header";
 import { EventsToolbar } from "@/components/app/events-toolbar";
 import { EventCard } from "@/components/app/event-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { useDelayedLoading } from "@/lib/use-delayed-loading";
 import { getEvents, filterLocal } from "@/lib/api";
@@ -126,20 +125,20 @@ export default function Events() {
           ))}
         </ul>
       ) : count === 0 ? (
-        <EmptyState
-          icon={<SearchX />}
-          title="No events match your filters."
-          description={
-            hasActiveFilters
-              ? [category !== "All" && category, q && `“${q}”`].filter(Boolean).join(" · ")
-              : undefined
-          }
-          action={
-            <Button variant="secondary" onClick={() => setParams({})}>
-              Clear filters
-            </Button>
-          }
-        />
+        <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-border py-12 text-center">
+          <div className="text-fg-faint [&_svg]:size-12" aria-hidden="true">
+            <SearchX />
+          </div>
+          <p className="text-title-4 text-fg">No events match your filters.</p>
+          {hasActiveFilters && (
+            <p className="max-w-[42ch] text-caption text-fg-subtle">
+              {[category !== "All" && category, q && `“${q}”`].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          <Button variant="secondary" onClick={() => setParams({})}>
+            Clear filters
+          </Button>
+        </div>
       ) : groups ? (
         <div className="flex flex-col gap-8">
           {groups.map(([key, events]) => (
