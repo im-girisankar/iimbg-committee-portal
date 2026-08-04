@@ -11,7 +11,7 @@ import { cn } from "@/lib/cn";
 const card = cva("rounded-md border border-border bg-surface", {
   variants: {
     interactive: {
-      true: "transition-colors duration-[--dur-fast] hover:bg-surface-hover",
+      true: "transition-colors duration-[var(--dur-fast)] hover:bg-surface-hover",
       false: "",
     },
   },

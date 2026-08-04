@@ -8,6 +8,30 @@ worked. Phases are ordered so nothing is ever built twice.
 require editing `api/`, `lib/schemas.ts`, `lib/api.ts`, or `lib/form.ts` — stop, you have
 misread the task.
 
+---
+
+## ⚠️ SCOPE CUTS — binding, applied 2026-08-04
+
+The owner's instruction: **"Make sure we are not over-engineering this. I just need a good
+enough frontend."** These cuts override anything in `03-COMPONENTS.md` or `04-PAGES.md` that
+says otherwise. Do not rebuild them from the original specs.
+
+| Cut | Where it was specified | Status |
+|---|---|---|
+| Events **grid/list view toggle** + `EventCard variant="row"` | `04-PAGES.md § P2`, `03 § 4.1` | ❌ **DROPPED.** Ship grid only. |
+| Home **stat strip** (7 events / 12 members / 4 tracks / 2026) | `04-PAGES.md § P1` | ❌ **DROPPED.** |
+| **Phase 8** (polish & scoring pass) | below | ❌ **SKIPPED entirely.** |
+| Single-use primitives | `03-COMPONENTS.md § 3` | ⚠️ Any `ui/*` component used in **fewer than 2 places** after Phase 6 gets inlined at its call site and deleted in Phase 7. |
+| Phase 7 (purge) | below | ✅ **KEPT as planned** — it is nearly all deletions and the highest value item. |
+
+Everything else stands: all five bug fixes, the design system, mobile fit, and the 12.3 MB purge.
+
+**Default posture from here:** the simplest thing that looks right and works. Do not add
+abstraction for a second hypothetical caller. Do not add features the spec did not ask for.
+Four pages, seven events, twelve people — build for that, not for a product.
+
+---
+
 **Second rule for every phase:** `07-MOBILE.md` is binding. Mobile is the base case, not a final
 QA pass. Write unprefixed classes for 360px and add breakpoints upward. No phase is complete
 until `npm run check:mobile` exits 0 at 320 / 360 / 390 / 430 / 768px on every route.

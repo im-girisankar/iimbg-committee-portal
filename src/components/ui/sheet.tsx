@@ -30,7 +30,7 @@ export function SheetContent({ className, children, title, ...props }: SheetCont
           "h-[100dvh] w-[min(320px,86vw)] overflow-y-auto",
           "border-l border-border bg-surface shadow-overlay",
           "rounded-l-lg",
-          "transition-transform duration-[--dur-slow] ease-[--ease-in-out]",
+          "transition-transform duration-[var(--dur-slow)] ease-[var(--ease-in-out)]",
           "pb-[env(safe-area-inset-bottom)]",
           className,
         )}
