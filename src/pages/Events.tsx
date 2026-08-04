@@ -8,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useDelayedLoading } from "@/lib/use-delayed-loading";
 import { getEvents, filterLocal } from "@/lib/api";
-import { monthKey, monthLabel } from "@/lib/format";
 import type { Event } from "@/lib/schemas";
 
 const GRID = "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3";
@@ -79,20 +78,16 @@ export default function Events() {
     setParams(p, { replace: true });
   }
 
-  // Grouped chronologically by month — disabled while a search query is
-  // active, because search results are relevance-ordered, not chronological.
-  const groups = useMemo(() => {
-    if (q) return null;
-    const byMonth = new Map<string, Event[]>();
-    const sorted = [...filtered].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-    for (const event of sorted) {
-      const key = monthKey(event.date);
-      const list = byMonth.get(key);
-      if (list) list.push(event);
-      else byMonth.set(key, [event]);
-    }
-    return [...byMonth.entries()].sort(([a], [b]) => (a < b ? -1 : 1));
-  }, [filtered, q]);
+  /* One continuous grid, sorted by date.
+     Month sections were tried and removed: each month started a new grid, so
+     a month with two events left a visible hole in the third column and the
+     page read as broken alignment rather than as structure. Every card
+     already carries its own date, so the grouping was not carrying its
+     weight. Chronological order is preserved. */
+  const sorted = useMemo(
+    () => [...filtered].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0)),
+    [filtered],
+  );
 
   const count = filtered.length;
   const countLabel = count === 0 ? "No events" : count === 1 ? "1 event" : `${count} events`;
@@ -112,8 +107,13 @@ export default function Events() {
         className="sm:sticky sm:top-[var(--nav-h)] sm:z-10 sm:bg-bg/80 sm:py-3 sm:backdrop-blur"
       />
 
-      <p className="mt-4 mb-5 text-caption text-fg-subtle" aria-live="polite">
-        {countLabel}
+      {/* Held back while the skeleton is up. The count derives from `filtered`,
+          which populates as soon as the fetch resolves — but the grid is also
+          gated behind `useDelayedLoading`'s minimum hold, so announcing
+          "7 events" over a screen of skeletons stated a number the user could
+          not yet see. */}
+      <p className="mt-4 mb-5 min-h-4 text-caption text-fg-subtle" aria-live="polite">
+        {showSkeleton ? "" : countLabel}
       </p>
 
       {showSkeleton ? (
@@ -139,26 +139,9 @@ export default function Events() {
             Clear filters
           </Button>
         </div>
-      ) : groups ? (
-        <div className="flex flex-col gap-8">
-          {groups.map(([key, events]) => (
-            <div key={key}>
-              <h2 className="mb-4 border-t border-border pt-4 text-micro tracking-wide text-fg-subtle uppercase">
-                {monthLabel(events[0].date)}
-              </h2>
-              <ul className={GRID}>
-                {events.map((event) => (
-                  <li key={event.id}>
-                    <EventCard event={event} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
       ) : (
         <ul className={GRID}>
-          {filtered.map((event) => (
+          {sorted.map((event) => (
             <li key={event.id}>
               <EventCard event={event} />
             </li>
