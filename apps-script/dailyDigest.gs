@@ -165,23 +165,62 @@ function setupRunLogTab_(ss) {
  * @return {Object} { event, rating, improve, timestamp, ... } -> 0-based column.
  */
 function getColumnMap_(headers) {
-  function find(needle) {
+  function find(possibleHeaders) {
     for (var i = 0; i < headers.length; i++) {
-      if (String(headers[i]).toLowerCase().indexOf(needle) !== -1) { return i; }
+      var header = String(headers[i]).trim().toLowerCase();
+
+      for (var j = 0; j < possibleHeaders.length; j++) {
+        if (header.indexOf(possibleHeaders[j].toLowerCase()) !== -1) {
+          return i;
+        }
+      }
     }
     return -1;
   }
+
   var map = {
-    event: find("which event"),
-    rating: find("overall rating"),
-    improve: find("what should we improve"),
-    wentWell: find("what went well"),
-    email: find("email"),
-    timestamp: find("timestamp")
+    event: find([
+      "which event"
+    ]),
+
+    rating: find([
+      "overall experience",
+      "overall rating"
+    ]),
+
+    valuable: find([
+      "most valuable",
+      "enjoy the most"
+    ]),
+
+    improve: find([
+      "improve for future events",
+      "what should we improve",
+      "what can we improve"
+    ]),
+
+    attendAgain: find([
+      "would you attend another"
+    ]),
+
+    email: find([
+      "email"
+    ]),
+
+    timestamp: find([
+      "timestamp"
+    ])
   };
-  if (map.event === -1)    { throw new Error("Could not find the 'Which event did you attend?' column in '" + DIGEST_SHEET_NAME + "'."); }
-  if (map.rating === -1)   { throw new Error("Could not find the 'Overall rating' column in '" + DIGEST_SHEET_NAME + "'."); }
-  if (map.improve === -1)  { throw new Error("Could not find the 'What should we improve?' column in '" + DIGEST_SHEET_NAME + "'."); }
+
+  if (map.event === -1)
+    throw new Error("Event column not found.");
+
+  if (map.rating === -1)
+    throw new Error("Rating column not found.");
+
+  if (map.improve === -1)
+    throw new Error("Improvement column not found.");
+
   return map;
 }
 
