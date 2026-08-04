@@ -29,22 +29,36 @@ function readStoredTheme(): Theme {
 }
 
 /**
- * light | dark | system, persisted at `bodhi-theme`. Applies `.dark` to
- * `<html>` and sets `colorScheme`. Listens to
- * `matchMedia('(prefers-color-scheme: dark)')` while in `system` so an OS
- * theme change is reflected live without a reload.
+ * `system` remains the default so a first-time visitor gets their OS
+ * preference, but `resolved` reports what is ACTUALLY on screen — which is
+ * what the toggle needs in order to flip in a single click. Exposing only the
+ * raw three-state value forced users to click twice to reach dark from the
+ * initial `system` state, and showed a monitor icon that told them nothing
+ * about the current appearance.
  */
-export function useTheme(): [Theme, (next: Theme) => void] {
+export function useTheme(): {
+  theme: Theme;
+  resolved: "light" | "dark";
+  setTheme: (next: Theme) => void;
+  toggle: () => void;
+} {
   const [theme, setThemeState] = useState<Theme>(readStoredTheme);
+  const [resolved, setResolved] = useState<"light" | "dark">(() =>
+    typeof window === "undefined" ? "light" : resolveIsDark(readStoredTheme()) ? "dark" : "light",
+  );
 
   useEffect(() => {
     applyTheme(theme);
+    setResolved(resolveIsDark(theme) ? "dark" : "light");
   }, [theme]);
 
   useEffect(() => {
     if (theme !== "system") return;
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => applyTheme("system");
+    const handleChange = () => {
+      applyTheme("system");
+      setResolved(prefersDark() ? "dark" : "light");
+    };
     mql.addEventListener("change", handleChange);
     return () => mql.removeEventListener("change", handleChange);
   }, [theme]);
@@ -54,5 +68,15 @@ export function useTheme(): [Theme, (next: Theme) => void] {
     setThemeState(next);
   }, []);
 
-  return [theme, setTheme];
+  /** Always flips what is currently on screen, in one click. */
+  const toggle = useCallback(() => {
+    setResolved((current) => {
+      const next = current === "dark" ? "light" : "dark";
+      window.localStorage.setItem(STORAGE_KEY, next);
+      setThemeState(next);
+      return next;
+    });
+  }, []);
+
+  return { theme, resolved, setTheme, toggle };
 }

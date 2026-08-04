@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users } from "lucide-react";
+import { Calendar, CalendarDays, MapPin, Users } from "lucide-react";
 import { Card, CardBody, CardMedia } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CategoryDot } from "./category-dot";
@@ -46,19 +46,17 @@ export function EventSummary({ event, loading, className }: EventSummaryProps) {
     );
   }
 
+  /* No selection yet. Deliberately NOT a full-height card with an empty
+     image well — that rendered as a large blank grey box that looked like a
+     failed image load rather than a prompt. A single dashed row states what
+     to do and takes only the space it needs. */
   if (!event) {
     return (
       <div className={className}>
-        <div className="flex items-center gap-3 rounded-md border border-border bg-surface p-3 text-ui text-fg-subtle lg:hidden">
-          <div className="size-14 shrink-0 rounded-sm bg-bg-muted" aria-hidden="true" />
-          Select an event to see details
+        <div className="flex items-center gap-2.5 rounded-md border border-dashed border-border px-3 py-3 text-ui text-fg-subtle">
+          <CalendarDays className="size-4 shrink-0" aria-hidden="true" />
+          <span>Pick an event to see its details here.</span>
         </div>
-        <Card className="hidden lg:block">
-          <div className="aspect-[3/2] w-full bg-bg-muted" aria-hidden="true" />
-          <CardBody>
-            <p className="text-center text-ui text-fg-subtle">Select an event to see details</p>
-          </CardBody>
-        </Card>
       </div>
     );
   }
