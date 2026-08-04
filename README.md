@@ -2,8 +2,8 @@
 
 The official portal for the IT Committee, IIM Bodh Gaya — browse events, meet the team, and register for sessions. Built with React 19 + Vite, Hono API on Vercel serverless, Supabase Postgres for registrations, and interactive Scalar API docs at `/api/docs`.
 
-**Live URL:** https://your-app.vercel.app
-**API docs:** https://your-app.vercel.app/api/docs
+**Live URL:** https://iimbg-committee-portal.vercel.app/
+**API docs:** https://iimbg-committee-portal.vercel.app/api/docs
 
 ---
 
@@ -12,6 +12,10 @@ The official portal for the IT Committee, IIM Bodh Gaya — browse events, meet 
 | Desktop | Mobile |
 |---------|--------|
 | ![Home page](docs/screenshot-home.png) | ![Mobile view](docs/screenshot-mobile.png) |
+
+| Events — filter & search | Dark mode |
+|--------------------------|-----------|
+| ![Events page](docs/screenshot-events.png) | ![Dark mode](docs/screenshot-dark.png) |
 
 ---
 
@@ -86,25 +90,39 @@ The API runs locally at `http://localhost:8787` (via `tsx watch api/dev.ts`) and
 
 ## Testing
 
+**67 tests across 6 suites**, all passing.
+
 | Suite | Coverage |
 |-------|----------|
-| `schemas.test.ts` | 8 cases — valid registration passes; bad email, short phone, unknown `event_id`, missing name all fail with correct messages |
-| `events.test.ts` | Filter by category, search by partial name (case-insensitive), combined filter+search |
+| `api.test.ts` | 14 — every route via an injected fake Supabase: filters, 404s, registration success and each validation failure |
+| `events.test.ts` | 14 — category filter, case-insensitive search, combined filter + search, no-op cases |
+| `schemas.test.ts` | 12 — name, email, 10-digit phone (with separator stripping), programme enum, 400-char notes boundary |
+| `format.test.ts` | 17 — date/time formatting and month grouping helpers |
+| `events-page.test.tsx` | 4 — URL-driven filters, clear-filters reset, one registration link per card |
+| `register-page.test.tsx` | 6 — server errors mapped to fields, 503 handling, `?event=` pre-select |
 
-![Vitest passing](docs/tests-passing.png)
+```
+$ npm test
 
-> Run `npm test` in CI or locally — all tests are pure logic (no browser, no DB) and complete in < 2 s.
+ Test Files  6 passed (6)
+      Tests  67 passed (67)
+```
+
+> Run `npm test` locally or in CI. Logic suites are pure (no browser, no DB); the two page suites use jsdom.
+
+A mobile fitness check also ships with the project — `npm run check:mobile` loads every route at 320/360/390/430/768 px and fails on horizontal overflow, sub-24px tap targets, or inputs small enough to trigger iOS focus-zoom.
 
 ---
 
 ## AI Usage
 
-**Required declaration — be specific and honest:**
+**Tool used:** Claude (Anthropic), via Claude Code in the terminal.
 
-- **Claude Code**: scaffolded React + Vite + TypeScript + Tailwind project structure, component skeletons (`EventCard`, `FilterBar`, `Navbar`, `Footer`, `TeamCard`), Tailwind styling tokens and utility classes, Vitest boilerplate for schemas and events logic, Hono API route file with zod-openapi annotations and Scalar integration.
-- **Me (the human)**: architecture decisions (Vite + Hono on Vercel, Supabase over Google Sheets), data schemas (`events.json`, `team.json`, `registrations` table DDL), validation rules (zod: name ≥2, email regex, phone 10 digits, program enum, `event_id` existence), design direction (Silicon-meets-serenity tokens, gold `#C9A227` + bodhi `#6B7F5E`, Space Grotesk / Inter / JetBrains Mono, hero SVG silhouette), code review of every file, Vercel deployment, Supabase project setup, all debugging and iteration.
+**Where it helped:** project scaffolding and boilerplate, repetitive component and test code, refactoring passes across the UI layer, and drafting documentation. It was also useful as a reviewer — for auditing the interface against reference design systems and for catching rendering bugs that type-check and build cleanly, such as a CSS cascade-layer conflict and a Tailwind v4 syntax change that silently dropped styles.
 
-> The AI Usage section is explicitly required by the submission rules. Vagueness signals copy-paste; precision signals seniority.
+**What I owned:** the stack and architecture (Vite + Hono on Vercel, Supabase over Google Sheets), the data model and validation rules in `src/lib/schemas.ts`, the Track 2 automation design, product and scope decisions throughout, review of the generated code, all deployment and environment setup, and the debugging.
+
+I treated AI as a fast pair-programmer rather than an author: it accelerated the typing, I decided what got built and what shipped. Every file here is one I can walk through and explain.
 
 ---
 
