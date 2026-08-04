@@ -1,0 +1,13 @@
+{
+  "name": "Envision — IIM Bodh Gaya IT Committee",
+  "short_name": "Envision",
+  "description": "Events, team, and registrations for the Envision Entrepreneurship Cell and IT Committee at IIM Bodh Gaya.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0F766E",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
