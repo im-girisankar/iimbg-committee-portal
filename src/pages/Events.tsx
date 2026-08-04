@@ -1,134 +1,153 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { getEvents, filterLocal } from "../lib/api";
-import type { Event } from "../lib/schemas";
-import EventCard from "../components/EventCard";
-import FilterBar from "../components/FilterBar";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { SearchX } from "lucide-react";
+import { PageHeader } from "@/components/app/page-header";
+import { EventsToolbar } from "@/components/app/events-toolbar";
+import { EventCard } from "@/components/app/event-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { useDelayedLoading } from "@/lib/use-delayed-loading";
+import { getEvents, filterLocal } from "@/lib/api";
+import type { Event } from "@/lib/schemas";
 
-/* ─────────────────────────────────────────────────────────────
-   Events page — list with FilterBar + search. Responsive grid
-   1 / 2 / 3 columns. Empty state with working "clear filters" link.
-   ───────────────────────────────────────────────────────────── */
+const GRID = "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3";
 
+function EventCardSkeleton() {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-md border border-border">
+      <Skeleton className="aspect-[3/2] max-h-[180px] w-full rounded-none sm:max-h-none" />
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-5 w-4/5" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Events — the URL is the single source of truth for filter state (fixes
+ * D1: deep-linked `?category=` used to render the chip active but show all
+ * 7 events because the page called `setFiltered(evs)` unconditionally, and
+ * D2: "Clear filters" reset the grid but not the chips/input/URL). One
+ * `update()` setter drives chips, input, URL and grid together.
+ */
 export default function Events() {
+  const [params, setParams] = useSearchParams();
   const [allEvents, setAllEvents] = useState<Event[]>([]);
-  const [filtered, setFiltered] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(true);
+
+  const category = params.get("category") ?? "All";
+  const q = params.get("q") ?? "";
 
   useEffect(() => {
+    let active = true;
     getEvents().then((evs) => {
+      if (!active) return;
       setAllEvents(evs);
-      setFiltered(evs);
-      setLoading(false);
+      setIsFetching(false);
     });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const handleFilter = (opts: { category?: string; q?: string }) => {
-    const result = filterLocal(allEvents, opts);
-    setFiltered(result);
-  };
+  const showSkeleton = useDelayedLoading(isFetching);
 
-  if (loading) {
-    return (
-      <div className="pt-24 pb-20 px-4 bg-background">
-        <div className="mx-auto max-w-[1120px]">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-            }}
-            className="animate-pulse space-y-6"
-          >
-            <motion.div className="h-10 bg-background rounded w-1/4" />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <motion.div
-                  key={i}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-                  }}
-                  className="bg-surface border border-border rounded-2xl h-80"
-                />
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
+  const filtered = useMemo(
+    () =>
+      filterLocal(allEvents, {
+        category: category === "All" ? undefined : category,
+        q: q || undefined,
+      }),
+    [allEvents, category, q],
+  );
+
+  function update(next: { category?: string; q?: string }) {
+    const p = new URLSearchParams(params);
+    const nextCategory = next.category ?? category;
+    const nextQuery = next.q ?? q;
+
+    if (!nextCategory || nextCategory === "All") p.delete("category");
+    else p.set("category", nextCategory);
+
+    if (!nextQuery) p.delete("q");
+    else p.set("q", nextQuery);
+
+    setParams(p, { replace: true });
   }
 
+  /* One continuous grid, sorted by date.
+     Month sections were tried and removed: each month started a new grid, so
+     a month with two events left a visible hole in the third column and the
+     page read as broken alignment rather than as structure. Every card
+     already carries its own date, so the grouping was not carrying its
+     weight. Chronological order is preserved. */
+  const sorted = useMemo(
+    () => [...filtered].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0)),
+    [filtered],
+  );
+
+  const count = filtered.length;
+  const countLabel = count === 0 ? "No events" : count === 1 ? "1 event" : `${count} events`;
+  const hasActiveFilters = category !== "All" || q !== "";
+
   return (
-    <div className="pt-24 pb-20 px-4 bg-background">
-      <div className="mx-auto max-w-[1120px]">
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
-          <h1 className="font-display font-bold text-3xl md:text-4xl text-primary mb-2">
-            All Events
-          </h1>
-          <p className="text-secondary">
-            Filter by category or search by title, venue, or description.
-          </p>
-        </motion.header>
+    <div className="container-page pt-10 pb-16 lg:pt-14 lg:pb-24">
+      <PageHeader
+        title="Events"
+        subtitle="Workshops, competitions, and speaker sessions from Envision."
+      />
 
-        <FilterBar onFilter={handleFilter} />
+      <EventsToolbar
+        category={category}
+        query={q}
+        onChange={update}
+        className="sm:sticky sm:top-[var(--nav-h)] sm:z-10 sm:bg-bg/80 sm:py-3 sm:backdrop-blur"
+      />
 
-        {filtered.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center py-16 border border-dashed border-border rounded-2xl bg-surface/50"
-          >
-            <svg
-              className="mx-auto mb-4 text-border w-12 h-12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
-            <p className="text-lg text-secondary mb-2">
-              No events match your filters.
+      {/* Held back while the skeleton is up. The count derives from `filtered`,
+          which populates as soon as the fetch resolves — but the grid is also
+          gated behind `useDelayedLoading`'s minimum hold, so announcing
+          "7 events" over a screen of skeletons stated a number the user could
+          not yet see. */}
+      <p className="mt-4 mb-5 min-h-4 text-caption text-fg-subtle" aria-live="polite">
+        {showSkeleton ? "" : countLabel}
+      </p>
+
+      {showSkeleton ? (
+        <ul className={GRID} aria-label="Loading events">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <li key={i}>
+              <EventCardSkeleton />
+            </li>
+          ))}
+        </ul>
+      ) : count === 0 ? (
+        <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-border py-12 text-center">
+          <div className="text-fg-faint [&_svg]:size-12" aria-hidden="true">
+            <SearchX />
+          </div>
+          <p className="text-title-4 text-fg">No events match your filters.</p>
+          {hasActiveFilters && (
+            <p className="max-w-[42ch] text-caption text-fg-subtle">
+              {[category !== "All" && category, q && `“${q}”`].filter(Boolean).join(" · ")}
             </p>
-            <button
-              onClick={() => handleFilter({ category: undefined, q: undefined })}
-              className="text-accent hover:underline font-medium mono"
-            >
-              Clear filters
-            </button>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-            }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-            role="list"
-            aria-label="Events"
-          >
-            {filtered.map((event, i) => (
-              <motion.div key={event.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}>
-                <EventCard event={event} index={i} />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </div>
+          )}
+          <Button variant="secondary" onClick={() => setParams({})}>
+            Clear filters
+          </Button>
+        </div>
+      ) : (
+        <ul className={GRID}>
+          {sorted.map((event) => (
+            <li key={event.id}>
+              <EventCard event={event} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
